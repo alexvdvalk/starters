@@ -37,6 +37,12 @@ const nextConfig: NextConfig = {
 				port: '8055',
 				pathname: '/assets/**',
 			},
+			{
+				protocol: 'https',
+				hostname: 'kpt-cms-demo.directus.app',
+				port: '443',
+				pathname: '/assets/**',
+			},
 		],
 	},
 	env: {
