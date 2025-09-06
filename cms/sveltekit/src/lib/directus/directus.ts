@@ -7,12 +7,15 @@ import {
 	readUser,
 	createItem,
 	uploadFiles,
-	withToken
+	withToken,
+	staticToken
 } from '@directus/sdk';
 import type { RestClient } from '@directus/sdk';
 import Queue from 'p-queue';
 import type { Schema } from '../types/directus-schema';
 import { PUBLIC_DIRECTUS_URL } from '$env/static/public';
+import { DIRECTUS_SERVER_TOKEN } from '$env/static/private';
+// import { DIRECTUS_SERVER_TOKEN } from '$env/static/private';
 
 // Helper for retrying fetch requests
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -39,7 +42,9 @@ const getDirectus = (fetch: Function) => {
 		globals: {
 			fetch: (...args) => queue.add(() => fetchRetry(fetch, 0, ...args))
 		}
-	}).with(rest());
+	})
+		.with(staticToken(DIRECTUS_SERVER_TOKEN))
+		.with(rest());
 
 	return directus;
 };

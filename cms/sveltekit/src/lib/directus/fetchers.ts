@@ -3,6 +3,7 @@ import type { RequestEvent } from '@sveltejs/kit';
 import { type BlockPost, type PageBlock, type Post, type Schema } from '../types/directus-schema';
 import { useDirectus } from './directus';
 import { type QueryFilter, aggregate, readItem, readSingleton } from '@directus/sdk';
+import languages from './languages';
 
 /**
  * Fetches page data by permalink, including all nested blocks and dynamically fetching blog posts if required.
@@ -241,11 +242,16 @@ export const fetchSiteData = async (fetch: RequestEvent['fetch']) => {
  */
 export const fetchPostBySlug = async (
 	slug: string,
-	options: { draft?: boolean },
+	options: { draft?: boolean, language?: "en-US" | "de-DE" },
 	fetch: RequestEvent['fetch']
 ) => {
 	const { getDirectus, readItems } = useDirectus();
 	const directus = getDirectus(fetch);
+
+
+	const language = languages.get(options.language) || "en-US";
+
+	console.log("got langage parameter", language)
 
 	try {
 		const filter: QueryFilter<Schema, Post> = options?.draft
@@ -256,17 +262,32 @@ export const fetchPostBySlug = async (
 			readItems('posts', {
 				filter,
 				limit: 1,
-				fields: ['id', 'title', 'content', 'status', 'image', 'description', 'author', 'seo']
+				deep: {
+					translations: {
+						_filter: {
+							languages_code: { _eq: language }
+						}
+					}
+				},
+				fields: ['id', 'title', 'content', 'status', 'image', 'description', 'author', 'seo', { translations: ["languages_code", 'title', 'description', 'content'] }]
 			})
 		);
 
+
+		// if (posts.length === 0 || posts[0]?.translations?.length === 0) {
+		if (posts.length === 0) {
+			console.error(`No post found with slug: ${slug}`);
+			throw new Error(`Failed to fetch post with slug "${slug}"`);
+		}
+
 		const post = posts[0];
 
-		if (!post) {
-			console.error(`No post found with slug: ${slug}`);
-
-			return null;
+		if (post.translations && post.translations.length === 1) {
+			post.title = post.translations[0].title;
+			post.description = post.translations[0].description;
+			post.content = post.translations[0].content;
 		}
+
 
 		return post;
 	} catch (error) {

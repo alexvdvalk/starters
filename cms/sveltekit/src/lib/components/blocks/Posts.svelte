@@ -1,8 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import { fetchPaginatedPosts, fetchTotalPostCount } from '$lib/directus/fetchers';
 	import * as Pagination from '$lib/components/ui/pagination/index.js';
-
 	import setAttr from '$lib/directus/visualEditing';
 	import type { Post } from '$lib/types/directus-schema';
 	import DirectusImage from '../shared/DirectusImage.svelte';
@@ -10,6 +8,7 @@
 	import Tagline from '../ui/Tagline.svelte';
 	import { crossfade, fade, fly, scale, slide } from 'svelte/transition';
 	import { flip } from 'svelte/animate';
+	import { getPostsPaginated, getTotalPostCount } from './posts.remote';
 
 	interface PostsProps {
 		data: {
@@ -35,7 +34,7 @@
 
 	const fetchTotalPages = async () => {
 		try {
-			totalCount = await fetchTotalPostCount();
+			totalCount = await getTotalPostCount();
 			totalPages = Math.ceil(totalCount / perPage);
 		} catch (error) {
 			console.error('Error fetching total post count:', error);
@@ -53,7 +52,8 @@
 				return;
 			}
 
-			paginatedPosts = await fetchPaginatedPosts(perPage, currentPage);
+			paginatedPosts = await getPostsPaginated({ perPage, currentPage });
+			console.log('paginatedPosts', paginatedPosts);
 		} catch (error) {
 			console.error('Error fetching paginated posts:', error);
 		}

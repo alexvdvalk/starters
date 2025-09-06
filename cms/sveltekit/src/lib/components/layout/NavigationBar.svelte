@@ -11,6 +11,7 @@
 	import { ChevronDown, Menu } from '@lucide/svelte';
 	import * as Collapsible from '$lib/components/ui/collapsible';
 	import setAttr from '$lib/directus/visualEditing';
+	import LanguagePicker from './LanguagePicker.svelte';
 
 	const globals = $derived(page.data.globals);
 	const navigation = $derived(page.data.headerNavigation);
@@ -147,6 +148,8 @@
 					</DropdownMenu.Content>
 				</DropdownMenu.Root>
 			</div>
+
+			<LanguagePicker />
 
 			<LightSwitch />
 		</nav>

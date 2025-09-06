@@ -1,30 +1,31 @@
+
 export interface ExtensionSeoMetadata {
-	title?: string;
-	meta_description?: string;
-	og_image?: string;
-	additional_fields?: Record<string, unknown>;
-	sitemap?: {
-		change_frequency: 'always' | 'hourly' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'never';
-		priority: string;
-	};
-	no_index?: boolean;
-	no_follow?: boolean;
+    title?: string;
+    meta_description?: string;
+    og_image?: string;
+    additional_fields?: Record<string, unknown>;
+    sitemap?: {
+        change_frequency: 'always' | 'hourly' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'never';
+        priority: string;
+    };
+    no_index?: boolean;
+    no_follow?: boolean;
 }
 
 export interface AiPrompt {
 	/** @primaryKey */
 	id: string;
+	sort?: number | null;
 	/** @description Unique name for the prompt. Use names like "create-article" or "generate-product-description". @required */
 	name: string;
-	/** @description Briefly explain what this prompt does in 1-2 sentences. */
-	description?: string | null;
-	/** @description Instructions that shape how the AI responds. */
-	system_prompt?: string | null;
-	/** @description Optional: Define the conversation structure between users and AI. Used to add context and improve outputs. */
-	messages?: Array<{ role: 'user' | 'assistant'; text: string }> | null;
-	sort?: number | null;
 	/** @description Is this prompt published and available to use? */
 	status?: 'draft' | 'in_review' | 'published';
+	/** @description Briefly explain what this prompt does in 1-2 sentences. */
+	description?: string | null;
+	/** @description Optional: Define the conversation structure between users and AI. Used to add context and improve outputs. */
+	messages?: Array<{ role: 'user' | 'assistant'; text: string }> | null;
+	/** @description Instructions that shape how the AI responds. */
+	system_prompt?: string | null;
 	date_created?: string | null;
 	user_created?: DirectusUser | string | null;
 	date_updated?: string | null;
@@ -94,7 +95,7 @@ export interface BlockGallery {
 	date_updated?: string | null;
 	user_updated?: DirectusUser | string | null;
 	/** @description Images to include in the image gallery. */
-	items?: DirectusFile[] | string[] | null;
+	items?: BlockGalleryItem[] | string[];
 }
 
 export interface BlockGalleryItem {
@@ -206,22 +207,30 @@ export interface BlockRichtext {
 	user_updated?: DirectusUser | string | null;
 }
 
+export interface CasinosGame {
+	/** @primaryKey */
+	id: number;
+	games_id?: Game | string | null;
+}
+
+export interface Customer {
+	/** @primaryKey */
+	id: string;
+	user_created?: DirectusUser | string | null;
+	date_created?: string | null;
+	user_updated?: DirectusUser | string | null;
+	date_updated?: string | null;
+	name?: string | null;
+	status?: 'active' | 'prospect' | 'do_not_touch' | null;
+}
+
 export interface FormField {
 	/** @primaryKey */
 	id: string;
 	/** @description Unique field identifier, not shown to users (lowercase, hyphenated) */
 	name?: string | null;
 	/** @description Input type for the field */
-	type?:
-		| 'text'
-		| 'textarea'
-		| 'checkbox'
-		| 'checkbox_group'
-		| 'radio'
-		| 'file'
-		| 'select'
-		| 'hidden'
-		| null;
+	type?: 'text' | 'textarea' | 'checkbox' | 'checkbox_group' | 'radio' | 'file' | 'select' | 'hidden' | null;
 	/** @description Text label shown to form users. */
 	label?: string | null;
 	/** @description Default text shown in empty input. */
@@ -298,25 +307,68 @@ export interface FormSubmissionValue {
 	timestamp?: string | null;
 }
 
+export interface Game {
+	/** @primaryKey */
+	id: string;
+	user_created?: DirectusUser | string | null;
+	date_created?: string | null;
+	user_updated?: DirectusUser | string | null;
+	date_updated?: string | null;
+	title?: string | null;
+	region?: GamesRegion | string | null;
+	language?: GamesLanguage | string | null;
+	cover_image?: DirectusFile | string | null;
+	priority?: boolean | null;
+	sort?: number | null;
+	cate_id?: GamesCategory | string | null;
+	categories?: GamesGamesCategory[] | string[];
+}
+
+export interface GamesCategory {
+	/** @primaryKey */
+	id: string;
+	date_created?: string | null;
+	date_updated?: string | null;
+	category_name?: string | null;
+	games?: GamesGamesCategory[] | string[];
+}
+
+export interface GamesGamesCategory {
+	/** @primaryKey */
+	id: number;
+	games_id?: Game | string | null;
+	games_category_id?: GamesCategory | string | null;
+	sort?: number | null;
+}
+
+export interface GamesLanguage {
+	/** @primaryKey */
+	id: string;
+	user_created?: DirectusUser | string | null;
+	date_created?: string | null;
+	user_updated?: DirectusUser | string | null;
+	date_updated?: string | null;
+	language?: string | null;
+}
+
+export interface GamesRegion {
+	/** @primaryKey */
+	id: string;
+	user_created?: DirectusUser | string | null;
+	date_created?: string | null;
+	user_updated?: DirectusUser | string | null;
+	date_updated?: string | null;
+	name?: string | null;
+	games?: Game[] | string[];
+}
+
 export interface Globals {
 	/** @description Site summary for search results. */
 	description?: string | null;
 	/** @primaryKey */
 	id: string;
 	/** @description Social media profile URLs */
-	social_links?: Array<{
-		url: string;
-		service:
-			| 'facebook'
-			| 'instagram'
-			| 'linkedin'
-			| 'x'
-			| 'vimeo'
-			| 'youtube'
-			| 'github'
-			| 'discord'
-			| 'docker';
-	}> | null;
+	social_links?: Array<{ url: string; service: 'facebook' | 'instagram' | 'linkedin' | 'x' | 'vimeo' | 'youtube' | 'github' | 'discord' | 'docker' }> | null;
 	/** @description Short phrase describing the site. */
 	tagline?: string | null;
 	/** @description Main site title */
@@ -331,14 +383,50 @@ export interface Globals {
 	openai_api_key?: string | null;
 	/** @description The public URL for this Directus instance. Used in Flows. */
 	directus_url?: string | null;
-	/** @description Accent color for the website (used on buttons, links, etc). */
-	accent_color?: string | null;
 	/** @description Main logo shown on the site (for dark mode). */
 	logo_dark_mode?: DirectusFile | string | null;
+	/** @description Accent color for the website (used on buttons, links, etc). */
+	accent_color?: string | null;
 	date_created?: string | null;
 	user_created?: DirectusUser | string | null;
 	date_updated?: string | null;
 	user_updated?: DirectusUser | string | null;
+}
+
+export interface Language {
+	/** @primaryKey */
+	code: string;
+	name?: string | null;
+	direction?: 'ltr' | 'rtl' | null;
+	flag?: DirectusFile | string | null;
+	slug_code?: string | null;
+	sort?: number | null;
+}
+
+export interface Location {
+	/** @primaryKey */
+	id: string;
+	user_created?: DirectusUser | string | null;
+	date_created?: string | null;
+	user_updated?: DirectusUser | string | null;
+	date_updated?: string | null;
+	name?: string | null;
+	location?: string | null;
+}
+
+export interface Movy {
+	/** @description This is an autocomplete field that queries an external API @primaryKey */
+	imdbID: string;
+	user_created?: DirectusUser | string | null;
+	date_created?: string | null;
+	user_updated?: DirectusUser | string | null;
+	date_updated?: string | null;
+	raw_json?: Record<string, any> | null;
+	title?: string | null;
+	year?: string | null;
+	plot?: string | null;
+	poster?: DirectusFile | string | null;
+	local_call?: string | null;
 }
 
 export interface Navigation {
@@ -382,6 +470,20 @@ export interface NavigationItem {
 	children?: NavigationItem[] | string[];
 }
 
+export interface OrderSync {
+	/** @primaryKey */
+	id: string;
+	store?: number | null;
+	status?: string | null;
+	shipping?: string | null;
+	shipping_service_name?: string | null;
+	recipient?: Record<string, any> | null;
+	costs?: Record<string, any> | null;
+	created?: string | null;
+	updated?: string | null;
+	order_total?: number | null;
+}
+
 export interface PageBlock {
 	/** @primaryKey */
 	id: string;
@@ -389,15 +491,7 @@ export interface PageBlock {
 	/** @description The id of the page that this block belongs to. */
 	page?: Page | string | null;
 	/** @description The data for the block. */
-	item?:
-		| BlockHero
-		| BlockRichtext
-		| BlockForm
-		| BlockPost
-		| BlockGallery
-		| BlockPricing
-		| string
-		| null;
+	item?: BlockHero | BlockRichtext | BlockForm | BlockPost | BlockGallery | BlockPricing | string | null;
 	/** @description The collection (type of block). */
 	collection?: string | null;
 	/** @description Temporarily hide this block on the website without having to remove it from your page. */
@@ -431,6 +525,47 @@ export interface Page {
 	blocks?: PageBlock[] | string[];
 }
 
+export interface PageView {
+	/** @primaryKey */
+	id: string;
+	user_created?: DirectusUser | string | null;
+	date_created?: string | null;
+	user_updated?: DirectusUser | string | null;
+	date_updated?: string | null;
+	state?: string | null;
+	browser?: 'chrome' | 'safari' | 'other' | null;
+	date?: string | null;
+	agent?: string | null;
+}
+
+export interface PlayerActivity {
+	/** @primaryKey */
+	id: string;
+	user_created?: DirectusUser | string | null;
+	date_created?: string | null;
+	user_updated?: DirectusUser | string | null;
+	date_updated?: string | null;
+	player?: Player | string | null;
+	type?: `Page View` | `Game Load` | `Load Credit` | `Cash Out` | null;
+	detail?: string | null;
+	credit_amout?: number | null;
+	game?: Game | string | null;
+}
+
+export interface Player {
+	/** @primaryKey */
+	id: string;
+	user_created?: DirectusUser | string | null;
+	date_created?: string | null;
+	user_updated?: DirectusUser | string | null;
+	date_updated?: string | null;
+	name?: string | null;
+	email?: string | null;
+	region?: `North America` | 'Europe' | 'Asia' | null;
+	plays_online?: boolean | null;
+	activity_history?: PlayerActivity[] | string[];
+}
+
 export interface Post {
 	/** @description Rich text content of your blog post. */
 	content?: string | null;
@@ -456,6 +591,29 @@ export interface Post {
 	user_created?: DirectusUser | string | null;
 	date_updated?: string | null;
 	user_updated?: DirectusUser | string | null;
+	translations?: PostsTranslation[] | null;
+}
+
+export interface PostsTranslation {
+	/** @primaryKey */
+	id: number;
+	posts_id?: Post | string | null;
+	languages_code?: Language | string | null;
+	/** @description Title of the blog post (used in page title and meta tags) @required */
+	title: string;
+	/** @description Short summary of the blog post to entice readers. */
+	description?: string | null;
+	/** @description Rich text content of your blog post. */
+	content?: string | null;
+}
+
+export interface Project {
+	/** @primaryKey */
+	id: string;
+	title?: string | null;
+	start_date?: string | null;
+	end_date?: string | null;
+	parent_project?: Project | string | null;
 }
 
 export interface Redirect {
@@ -505,12 +663,7 @@ export interface DirectusCollection {
 	display_template?: string | null;
 	hidden?: boolean;
 	singleton?: boolean;
-	translations?: Array<{
-		language: string;
-		translation: string;
-		singular: string;
-		plural: string;
-	}> | null;
+	translations?: Array<{ language: string; translation: string; singular: string; plural: string }> | null;
 	archive_field?: string | null;
 	archive_app_filter?: boolean;
 	archive_value?: string | null;
@@ -559,6 +712,7 @@ export interface DirectusField {
 	group?: DirectusField | string | null;
 	validation?: 'json' | null;
 	validation_message?: string | null;
+	translate?: boolean | null;
 }
 
 export interface DirectusFile {
@@ -582,8 +736,6 @@ export interface DirectusFile {
 	embed?: string | null;
 	description?: string | null;
 	location?: string | null;
-	tags?: string[] | null;
-	metadata?: 'json' | null;
 	focal_point_x?: number | null;
 	focal_point_y?: number | null;
 	tus_id?: string | null;
@@ -596,6 +748,7 @@ export interface DirectusFolder {
 	id: string;
 	name?: string;
 	parent?: DirectusFolder | string | null;
+	date_created?: string | null;
 }
 
 export interface DirectusMigration {
@@ -712,31 +865,12 @@ export interface DirectusSettings {
 	public_background?: DirectusFile | string | null;
 	public_note?: string | null;
 	auth_login_attempts?: number | null;
-	auth_password_policy?:
-		| null
-		| `/^.{8,}$/`
-		| `/(?=^.{8,}$)(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+}{';'?>.<,])(?!.*\\s).*$/`
-		| null;
+	auth_password_policy?: null | `/^.{8,}$/` | `/(?=^.{8,}$)(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+}{';'?>.<,])(?!.*\\s).*$/` | null;
 	storage_asset_transform?: 'all' | 'none' | 'presets' | null;
-	storage_asset_presets?: Array<{
-		key: string;
-		fit: 'contain' | 'cover' | 'inside' | 'outside';
-		width: number;
-		height: number;
-		quality: number;
-		withoutEnlargement: boolean;
-		format: 'auto' | 'jpeg' | 'png' | 'webp' | 'tiff' | 'avif';
-		transforms: 'json';
-	}> | null;
+	storage_asset_presets?: Array<{ key: string; fit: 'contain' | 'cover' | 'inside' | 'outside'; width: number; height: number; quality: number; withoutEnlargement: boolean; format: 'auto' | 'jpeg' | 'png' | 'webp' | 'tiff' | 'avif'; transforms: 'json' }> | null;
 	custom_css?: string | null;
 	storage_default_folder?: DirectusFolder | string | null;
-	basemaps?: Array<{
-		name: string;
-		type: 'raster' | 'tile' | 'style';
-		url: string;
-		tileSize: number;
-		attribution: string;
-	}> | null;
+	basemaps?: Array<{ name: string; type: 'raster' | 'tile' | 'style'; url: string; tileSize: number; attribution: string }> | null;
 	mapbox_key?: string | null;
 	module_bar?: 'json' | null;
 	project_descriptor?: string | null;
@@ -755,9 +889,10 @@ export interface DirectusSettings {
 	public_registration_verify_email?: boolean;
 	public_registration_role?: DirectusRole | string | null;
 	public_registration_email_filter?: 'json' | null;
-	/** @description Settings for the Command Palette Module. */
 	command_palette_settings?: Record<string, any> | null;
 	visual_editor_urls?: Array<{ url: string }> | null;
+	accepted_terms?: boolean | null;
+	project_id?: string | null;
 }
 
 export interface DirectusUser {
@@ -779,7 +914,7 @@ export interface DirectusUser {
 	token?: string | null;
 	last_access?: string | null;
 	last_page?: string | null;
-	provider?: string;
+	provider?: 'auth0';
 	external_identifier?: string | null;
 	auth_data?: 'json' | null;
 	email_notifications?: boolean | null;
@@ -788,6 +923,7 @@ export interface DirectusUser {
 	theme_light?: string | null;
 	theme_light_overrides?: 'json' | null;
 	theme_dark_overrides?: 'json' | null;
+	text_direction?: 'auto' | 'ltr' | 'rtl';
 	/** @description Blog posts this user has authored. */
 	posts?: Post[] | string[];
 	policies?: DirectusAccess[] | string[];
@@ -906,10 +1042,8 @@ export interface DirectusTranslation {
 	id: string;
 	/** @required */
 	language: string;
-	/** @required */
-	key: string;
-	/** @required */
-	value: string;
+	key?: string;
+	value?: string;
 }
 
 export interface DirectusVersion {
@@ -948,16 +1082,32 @@ export interface Schema {
 	block_pricing: BlockPricing[];
 	block_pricing_cards: BlockPricingCard[];
 	block_richtext: BlockRichtext[];
+	casinos_games: CasinosGame[];
+	customers: Customer[];
 	form_fields: FormField[];
 	forms: Form[];
 	form_submissions: FormSubmission[];
 	form_submission_values: FormSubmissionValue[];
+	games: Game[];
+	games_category: GamesCategory[];
+	games_games_category: GamesGamesCategory[];
+	games_language: GamesLanguage[];
+	games_regions: GamesRegion[];
 	globals: Globals;
+	languages: Language[];
+	locations: Location[];
+	movies: Movy[];
 	navigation: Navigation[];
 	navigation_items: NavigationItem[];
+	order_sync: OrderSync[];
 	page_blocks: PageBlock[];
 	pages: Page[];
+	page_views: PageView[];
+	player_activity: PlayerActivity[];
+	players: Player[];
 	posts: Post[];
+	posts_translations: PostsTranslation[];
+	projects: Project[];
 	redirects: Redirect[];
 	directus_access: DirectusAccess[];
 	directus_activity: DirectusActivity[];
@@ -1000,16 +1150,32 @@ export enum CollectionNames {
 	block_pricing = 'block_pricing',
 	block_pricing_cards = 'block_pricing_cards',
 	block_richtext = 'block_richtext',
+	casinos_games = 'casinos_games',
+	customers = 'customers',
 	form_fields = 'form_fields',
 	forms = 'forms',
 	form_submissions = 'form_submissions',
 	form_submission_values = 'form_submission_values',
+	games = 'games',
+	games_category = 'games_category',
+	games_games_category = 'games_games_category',
+	games_language = 'games_language',
+	games_regions = 'games_regions',
 	globals = 'globals',
+	languages = 'languages',
+	locations = 'locations',
+	movies = 'movies',
 	navigation = 'navigation',
 	navigation_items = 'navigation_items',
+	order_sync = 'order_sync',
 	page_blocks = 'page_blocks',
 	pages = 'pages',
+	page_views = 'page_views',
+	player_activity = 'player_activity',
+	players = 'players',
 	posts = 'posts',
+	posts_translations = 'posts_translations',
+	projects = 'projects',
 	redirects = 'redirects',
 	directus_access = 'directus_access',
 	directus_activity = 'directus_activity',
