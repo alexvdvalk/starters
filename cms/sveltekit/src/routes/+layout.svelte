@@ -20,6 +20,7 @@
 	);
 	const accentColor = $derived(data.globals?.accent_color || '#6644ff');
 
+
 	onMount(async () => {
 		const { apply } = await import('@directus/visual-editing');
 		apply({

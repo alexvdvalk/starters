@@ -5,7 +5,7 @@ config();
 
 async function generateTypes() {
 	const directusUrl = process.env.PUBLIC_DIRECTUS_URL;
-	const directusToken = process.env.PUBLIC_DIRECTUS_TOKEN;
+	const directusToken = process.env.PRIVATE_DIRECTUS_TOKEN;
 
 	if (!directusUrl || !directusToken) {
 		console.error(

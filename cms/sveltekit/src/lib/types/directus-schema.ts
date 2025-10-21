@@ -1,30 +1,31 @@
+
 export interface ExtensionSeoMetadata {
-	title?: string;
-	meta_description?: string;
-	og_image?: string;
-	additional_fields?: Record<string, unknown>;
-	sitemap?: {
-		change_frequency: 'always' | 'hourly' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'never';
-		priority: string;
-	};
-	no_index?: boolean;
-	no_follow?: boolean;
+    title?: string;
+    meta_description?: string;
+    og_image?: string;
+    additional_fields?: Record<string, unknown>;
+    sitemap?: {
+        change_frequency: 'always' | 'hourly' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'never';
+        priority: string;
+    };
+    no_index?: boolean;
+    no_follow?: boolean;
 }
 
 export interface AiPrompt {
 	/** @primaryKey */
 	id: string;
+	sort?: number | null;
 	/** @description Unique name for the prompt. Use names like "create-article" or "generate-product-description". @required */
 	name: string;
-	/** @description Briefly explain what this prompt does in 1-2 sentences. */
-	description?: string | null;
-	/** @description Instructions that shape how the AI responds. */
-	system_prompt?: string | null;
-	/** @description Optional: Define the conversation structure between users and AI. Used to add context and improve outputs. */
-	messages?: Array<{ role: 'user' | 'assistant'; text: string }> | null;
-	sort?: number | null;
 	/** @description Is this prompt published and available to use? */
 	status?: 'draft' | 'in_review' | 'published';
+	/** @description Briefly explain what this prompt does in 1-2 sentences. */
+	description?: string | null;
+	/** @description Optional: Define the conversation structure between users and AI. Used to add context and improve outputs. */
+	messages?: Array<{ role: 'user' | 'assistant'; text: string }> | null;
+	/** @description Instructions that shape how the AI responds. */
+	system_prompt?: string | null;
 	date_created?: string | null;
 	user_created?: DirectusUser | string | null;
 	date_updated?: string | null;
@@ -94,7 +95,7 @@ export interface BlockGallery {
 	date_updated?: string | null;
 	user_updated?: DirectusUser | string | null;
 	/** @description Images to include in the image gallery. */
-	items?: DirectusFile[] | string[] | null;
+	items?: BlockGalleryItem[] | string[];
 }
 
 export interface BlockGalleryItem {
@@ -206,22 +207,25 @@ export interface BlockRichtext {
 	user_updated?: DirectusUser | string | null;
 }
 
+export interface Experience {
+	/** @primaryKey */
+	id: string;
+	user_created?: DirectusUser | string | null;
+	date_created?: string | null;
+	user_updated?: DirectusUser | string | null;
+	date_updated?: string | null;
+	title?: string | null;
+	slug?: string | null;
+	sub_experiences?: SubExperience[] | string[];
+}
+
 export interface FormField {
 	/** @primaryKey */
 	id: string;
 	/** @description Unique field identifier, not shown to users (lowercase, hyphenated) */
 	name?: string | null;
 	/** @description Input type for the field */
-	type?:
-		| 'text'
-		| 'textarea'
-		| 'checkbox'
-		| 'checkbox_group'
-		| 'radio'
-		| 'file'
-		| 'select'
-		| 'hidden'
-		| null;
+	type?: 'text' | 'textarea' | 'checkbox' | 'checkbox_group' | 'radio' | 'file' | 'select' | 'hidden' | null;
 	/** @description Text label shown to form users. */
 	label?: string | null;
 	/** @description Default text shown in empty input. */
@@ -304,19 +308,7 @@ export interface Globals {
 	/** @primaryKey */
 	id: string;
 	/** @description Social media profile URLs */
-	social_links?: Array<{
-		url: string;
-		service:
-			| 'facebook'
-			| 'instagram'
-			| 'linkedin'
-			| 'x'
-			| 'vimeo'
-			| 'youtube'
-			| 'github'
-			| 'discord'
-			| 'docker';
-	}> | null;
+	social_links?: Array<{ url: string; service: 'facebook' | 'instagram' | 'linkedin' | 'x' | 'vimeo' | 'youtube' | 'github' | 'discord' | 'docker' }> | null;
 	/** @description Short phrase describing the site. */
 	tagline?: string | null;
 	/** @description Main site title */
@@ -331,14 +323,47 @@ export interface Globals {
 	openai_api_key?: string | null;
 	/** @description The public URL for this Directus instance. Used in Flows. */
 	directus_url?: string | null;
-	/** @description Accent color for the website (used on buttons, links, etc). */
-	accent_color?: string | null;
 	/** @description Main logo shown on the site (for dark mode). */
 	logo_dark_mode?: DirectusFile | string | null;
+	/** @description Accent color for the website (used on buttons, links, etc). */
+	accent_color?: string | null;
 	date_created?: string | null;
 	user_created?: DirectusUser | string | null;
 	date_updated?: string | null;
 	user_updated?: DirectusUser | string | null;
+}
+
+export interface LocationExperience {
+	/** @primaryKey */
+	id: string;
+	user_created?: DirectusUser | string | null;
+	date_created?: string | null;
+	user_updated?: DirectusUser | string | null;
+	date_updated?: string | null;
+	experience?: SubExperience | string | null;
+	location?: Location | string | null;
+	description?: string | null;
+	title?: string | null;
+}
+
+export interface Location {
+	/** @primaryKey */
+	id: string;
+	user_created?: DirectusUser | string | null;
+	date_created?: string | null;
+	user_updated?: DirectusUser | string | null;
+	date_updated?: string | null;
+	slug?: string | null;
+	seo_slug?: string | null;
+	seo_description?: string | null;
+	display_name?: string | null;
+	rating_info?: string | null;
+	price_info?: string | null;
+	arrival_info?: string | null;
+	location_map_file?: DirectusFile | string | null;
+	location_map?: string | null;
+	opening_info?: string | null;
+	location_experiences?: LocationExperience[] | string[];
 }
 
 export interface Navigation {
@@ -389,15 +414,7 @@ export interface PageBlock {
 	/** @description The id of the page that this block belongs to. */
 	page?: Page | string | null;
 	/** @description The data for the block. */
-	item?:
-		| BlockHero
-		| BlockRichtext
-		| BlockForm
-		| BlockPost
-		| BlockGallery
-		| BlockPricing
-		| string
-		| null;
+	item?: BlockHero | BlockRichtext | BlockForm | BlockPost | BlockGallery | BlockPricing | string | null;
 	/** @description The collection (type of block). */
 	collection?: string | null;
 	/** @description Temporarily hide this block on the website without having to remove it from your page. */
@@ -427,6 +444,7 @@ export interface Page {
 	user_created?: DirectusUser | string | null;
 	date_updated?: string | null;
 	user_updated?: DirectusUser | string | null;
+	location?: Location | string | null;
 	/** @description Create and arrange different content blocks (like text, images, or videos) to build your page. */
 	blocks?: PageBlock[] | string[];
 }
@@ -474,6 +492,19 @@ export interface Redirect {
 	user_updated?: DirectusUser | string | null;
 }
 
+export interface SubExperience {
+	/** @primaryKey */
+	id: string;
+	user_created?: DirectusUser | string | null;
+	date_created?: string | null;
+	user_updated?: DirectusUser | string | null;
+	date_updated?: string | null;
+	experience?: Experience | string | null;
+	title?: string | null;
+	slug?: string | null;
+	locations?: LocationExperience[] | string[];
+}
+
 export interface DirectusAccess {
 	/** @primaryKey */
 	id: string;
@@ -505,12 +536,7 @@ export interface DirectusCollection {
 	display_template?: string | null;
 	hidden?: boolean;
 	singleton?: boolean;
-	translations?: Array<{
-		language: string;
-		translation: string;
-		singular: string;
-		plural: string;
-	}> | null;
+	translations?: Array<{ language: string; translation: string; singular: string; plural: string }> | null;
 	archive_field?: string | null;
 	archive_app_filter?: boolean;
 	archive_value?: string | null;
@@ -712,31 +738,12 @@ export interface DirectusSettings {
 	public_background?: DirectusFile | string | null;
 	public_note?: string | null;
 	auth_login_attempts?: number | null;
-	auth_password_policy?:
-		| null
-		| `/^.{8,}$/`
-		| `/(?=^.{8,}$)(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+}{';'?>.<,])(?!.*\\s).*$/`
-		| null;
+	auth_password_policy?: null | `/^.{8,}$/` | `/(?=^.{8,}$)(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+}{';'?>.<,])(?!.*\\s).*$/` | null;
 	storage_asset_transform?: 'all' | 'none' | 'presets' | null;
-	storage_asset_presets?: Array<{
-		key: string;
-		fit: 'contain' | 'cover' | 'inside' | 'outside';
-		width: number;
-		height: number;
-		quality: number;
-		withoutEnlargement: boolean;
-		format: 'auto' | 'jpeg' | 'png' | 'webp' | 'tiff' | 'avif';
-		transforms: 'json';
-	}> | null;
+	storage_asset_presets?: Array<{ key: string; fit: 'contain' | 'cover' | 'inside' | 'outside'; width: number; height: number; quality: number; withoutEnlargement: boolean; format: 'auto' | 'jpeg' | 'png' | 'webp' | 'tiff' | 'avif'; transforms: 'json' }> | null;
 	custom_css?: string | null;
 	storage_default_folder?: DirectusFolder | string | null;
-	basemaps?: Array<{
-		name: string;
-		type: 'raster' | 'tile' | 'style';
-		url: string;
-		tileSize: number;
-		attribution: string;
-	}> | null;
+	basemaps?: Array<{ name: string; type: 'raster' | 'tile' | 'style'; url: string; tileSize: number; attribution: string }> | null;
 	mapbox_key?: string | null;
 	module_bar?: 'json' | null;
 	project_descriptor?: string | null;
@@ -755,9 +762,16 @@ export interface DirectusSettings {
 	public_registration_verify_email?: boolean;
 	public_registration_role?: DirectusRole | string | null;
 	public_registration_email_filter?: 'json' | null;
+	visual_editor_urls?: Array<{ url: string }> | null;
+	accepted_terms?: boolean | null;
+	project_id?: string | null;
 	/** @description Settings for the Command Palette Module. */
 	command_palette_settings?: Record<string, any> | null;
-	visual_editor_urls?: Array<{ url: string }> | null;
+	mcp_enabled?: boolean;
+	mcp_allow_deletes?: boolean;
+	mcp_prompts_collection?: string | null;
+	mcp_system_prompt_enabled?: boolean;
+	mcp_system_prompt?: string | null;
 }
 
 export interface DirectusUser {
@@ -788,6 +802,7 @@ export interface DirectusUser {
 	theme_light?: string | null;
 	theme_light_overrides?: 'json' | null;
 	theme_dark_overrides?: 'json' | null;
+	text_direction?: 'auto' | 'ltr' | 'rtl';
 	/** @description Blog posts this user has authored. */
 	posts?: Post[] | string[];
 	policies?: DirectusAccess[] | string[];
@@ -948,17 +963,21 @@ export interface Schema {
 	block_pricing: BlockPricing[];
 	block_pricing_cards: BlockPricingCard[];
 	block_richtext: BlockRichtext[];
+	experiences: Experience[];
 	form_fields: FormField[];
 	forms: Form[];
 	form_submissions: FormSubmission[];
 	form_submission_values: FormSubmissionValue[];
 	globals: Globals;
+	location_experiences: LocationExperience[];
+	locations: Location[];
 	navigation: Navigation[];
 	navigation_items: NavigationItem[];
 	page_blocks: PageBlock[];
 	pages: Page[];
 	posts: Post[];
 	redirects: Redirect[];
+	sub_experiences: SubExperience[];
 	directus_access: DirectusAccess[];
 	directus_activity: DirectusActivity[];
 	directus_collections: DirectusCollection[];
@@ -1000,17 +1019,21 @@ export enum CollectionNames {
 	block_pricing = 'block_pricing',
 	block_pricing_cards = 'block_pricing_cards',
 	block_richtext = 'block_richtext',
+	experiences = 'experiences',
 	form_fields = 'form_fields',
 	forms = 'forms',
 	form_submissions = 'form_submissions',
 	form_submission_values = 'form_submission_values',
 	globals = 'globals',
+	location_experiences = 'location_experiences',
+	locations = 'locations',
 	navigation = 'navigation',
 	navigation_items = 'navigation_items',
 	page_blocks = 'page_blocks',
 	pages = 'pages',
 	posts = 'posts',
 	redirects = 'redirects',
+	sub_experiences = 'sub_experiences',
 	directus_access = 'directus_access',
 	directus_activity = 'directus_activity',
 	directus_collections = 'directus_collections',
