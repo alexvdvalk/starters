@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { FormField } from '$lib/types/directus-schema';
+	import type { Form, FormField } from '$lib/types/directus-schema';
 	import { cn } from '$lib/utils';
 	import { CheckCircle } from '@lucide/svelte';
 	import DynamicForm from './DynamicForm.svelte';
@@ -7,17 +7,7 @@
 
 	interface FormBuilderProps {
 		class?: string;
-		form: {
-			id: string;
-			on_success?: 'redirect' | 'message' | null;
-			sort?: number | null;
-			submit_label?: string;
-			success_message?: string | null;
-			title?: string | null;
-			success_redirect_url?: string | null;
-			is_active?: boolean | null;
-			fields: FormField[];
-		};
+		form: Form;
 	}
 
 	const { form, class: className }: FormBuilderProps = $props();
