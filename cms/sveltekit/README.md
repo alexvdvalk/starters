@@ -1,6 +1,10 @@
-# SvelteKit Simple CMS Template with Directus Integration
+# SvelteKit CMS Template with Directus Integration
 
-This is a **Sveltekit-based Simple CMS Template** that is fully integrated with [Directus](https://directus.io/), offering
+<div align="center">
+  <img src="static/images/thumbnail.png" alt="SvelteKit CMS Template Thumbnail" width="800" height="auto" />
+</div>
+
+This is a **Sveltekit-based CMS Template** that is fully integrated with [Directus](https://directus.io/), offering
 a headless CMS solution for managing and delivering content seamlessly. The template leverages modern technologies like
 **Tailwind CSS**, and **Shadcn components**, providing a complete and scalable starting
 point for building CMS-powered web applications.
