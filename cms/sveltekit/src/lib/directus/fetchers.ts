@@ -2,7 +2,8 @@ import { error } from '@sveltejs/kit';
 import type { RequestEvent } from '@sveltejs/kit';
 import { type BlockPost, type PageBlock, type Post, type Schema } from '../types/directus-schema';
 import { useDirectus } from './directus';
-import { type QueryFilter, aggregate, readItem, readSingleton } from '@directus/sdk';
+import { type QueryFilter, aggregate, readItem } from '@directus/sdk';
+import { PUBLIC_SITE_ID } from '$env/static/public';
 
 /**
  * Fetches page data by permalink, including all nested blocks and dynamically fetching blog posts if required.
@@ -17,7 +18,7 @@ export const fetchPageData = async (
 
 	const pageData = await directus.request(
 		readItems('pages', {
-			filter: { permalink: { _eq: permalink } },
+			filter: { permalink: { _eq: permalink }, site: { _eq: PUBLIC_SITE_ID } },
 			limit: 1,
 			fields: [
 				'id',
@@ -177,7 +178,7 @@ export const fetchSiteData = async (fetch: RequestEvent['fetch']) => {
 	try {
 		const [globals, headerNavigation, footerNavigation] = await Promise.all([
 			directus.request(
-				readSingleton('globals', {
+				readItem('globals', 'ab89c489-faea-4310-8b59-7ddb3caf279a', {
 					fields: [
 						'id',
 						'title',

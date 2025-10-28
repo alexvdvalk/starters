@@ -111,11 +111,12 @@
 				mode: 'modal'
 			})}
 		>
+			<!-- class="object-contain" -->
 			<DirectusImage
 				uuid={image}
 				alt={tagline || headline || 'Hero Image'}
 				sizes={layout === 'center' ? '100vw' : '(max-width: 768px) 100vw, 50vw'}
-				class="object-contain"
+				fill
 			/>
 		</div>
 	{/if}
