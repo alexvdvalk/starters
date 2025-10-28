@@ -7,9 +7,9 @@
 	import { setAttr } from '$lib/directus/visualEditing';
 	import { getPage } from '$lib/directus/fetchers.remote';
 
-	// let { data } = $props();
+	let { data } = $props();
 
-	const data = $derived(await getPage('/' + page.params.permalink));
+	// const data = $derived(await getPage('/' + page.params.permalink));
 
 	const blocks: PageBlock[] = $derived.by(() => {
 		if (!data.blocks) return [];
@@ -21,7 +21,7 @@
 
 <svelte:head>
 	<title>{data.title || ''}</title>
-	<meta name="description" content={data.description || ''} />
+	<meta name="description" content={data.globals?.description || ''} />
 </svelte:head>
 
 <div class="relative">
