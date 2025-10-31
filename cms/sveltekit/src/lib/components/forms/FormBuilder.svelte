@@ -37,7 +37,11 @@
 					{error}
 				</div>
 			{/if}
-			<DynamicForm fields={form.fields} submitLabel={form.submit_label || 'Submit'} id={form.id} />
+			<DynamicForm
+				fields={form.fields as FormField[]}
+				submitLabel={form.submit_label || 'Submit'}
+				id={form.id}
+			/>
 		</div>
 	{/if}
 {/if}

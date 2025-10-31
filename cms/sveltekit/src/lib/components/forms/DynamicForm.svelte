@@ -7,7 +7,7 @@
 	import { superForm, superValidate } from 'sveltekit-superforms';
 	import { submitForm } from './forms.remote';
 
-	import { zodClient, zod } from 'sveltekit-superforms/adapters';
+	import { zodClient } from 'sveltekit-superforms/adapters';
 
 	interface DynamicFormProps {
 		fields: FormFieldType[];
@@ -41,8 +41,8 @@
 	}, {});
 
 	const form = superForm(defaultValues, {
-		validators: zodClient(formSchema),
-		SPA: true
+		// validators: zodClient(formSchema),
+		// SPA: true
 	});
 </script>
 
@@ -51,6 +51,9 @@
 	enctype="multipart/form-data"
 	{...submitForm.enhance(async ({ form, data, submit }) => {
 		try {
+			console.log('form', form);
+			console.log('data', data);
+			console.log('submit', submit);
 			await submit();
 			form.reset();
 			console.log('result', submitForm.result);
