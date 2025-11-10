@@ -1,34 +1,84 @@
+
 export interface ExtensionSeoMetadata {
-	title?: string;
-	meta_description?: string;
-	og_image?: string;
-	additional_fields?: Record<string, unknown>;
-	sitemap?: {
-		change_frequency: 'always' | 'hourly' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'never';
-		priority: string;
-	};
-	no_index?: boolean;
-	no_follow?: boolean;
+    title?: string;
+    meta_description?: string;
+    og_image?: string;
+    additional_fields?: Record<string, unknown>;
+    sitemap?: {
+        change_frequency: 'always' | 'hourly' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'never';
+        priority: string;
+    };
+    no_index?: boolean;
+    no_follow?: boolean;
 }
 
 export interface AiPrompt {
 	/** @primaryKey */
 	id: string;
+	sort?: number | null;
 	/** @description Unique name for the prompt. Use names like "create-article" or "generate-product-description". @required */
 	name: string;
-	/** @description Briefly explain what this prompt does in 1-2 sentences. */
-	description?: string | null;
-	/** @description Instructions that shape how the AI responds. */
-	system_prompt?: string | null;
-	/** @description Optional: Define the conversation structure between users and AI. Used to add context and improve outputs. */
-	messages?: Array<{ role: 'user' | 'assistant'; text: string }> | null;
-	sort?: number | null;
 	/** @description Is this prompt published and available to use? */
 	status?: 'draft' | 'in_review' | 'published';
+	/** @description Briefly explain what this prompt does in 1-2 sentences. */
+	description?: string | null;
+	/** @description Optional: Define the conversation structure between users and AI. Used to add context and improve outputs. */
+	messages?: Array<{ role: 'user' | 'assistant'; text: string }> | null;
+	/** @description Instructions that shape how the AI responds. */
+	system_prompt?: string | null;
 	date_created?: string | null;
 	user_created?: DirectusUser | string | null;
 	date_updated?: string | null;
 	user_updated?: DirectusUser | string | null;
+}
+
+export interface Aircraft {
+	/** @primaryKey */
+	id: string;
+	/** @required */
+	name: string;
+	model?: string | null;
+	/** @description e.g., fighter, transport */
+	role?: string | null;
+	manufacturer?: string | null;
+	operator?: Country | string | null;
+	max_speed_kmh?: number | null;
+	range_km?: number | null;
+	crew?: number | null;
+	introduced?: string | null;
+	/** @description operational, reserve, retired */
+	service_status?: string | null;
+	country?: Country | string | null;
+	image?: DirectusFile | string | null;
+}
+
+export interface Announcement {
+	/** @primaryKey */
+	id: string;
+	user_created?: DirectusUser | string | null;
+	date_created?: string | null;
+	user_updated?: DirectusUser | string | null;
+	date_updated?: string | null;
+	title?: string | null;
+	cover_image?: DirectusFile | string | null;
+	specifications?: string | null;
+	other_images?: AnnouncementsFile[] | string[];
+}
+
+export interface AnnouncementsFile {
+	/** @primaryKey */
+	id: number;
+	announcements_id?: Announcement | string | null;
+	directus_files_id?: DirectusFile | string | null;
+}
+
+export interface Area {
+	/** @primaryKey */
+	id: string;
+	user_created?: DirectusUser | string | null;
+	date_created?: string | null;
+	user_updated?: DirectusUser | string | null;
+	date_updated?: string | null;
 }
 
 export interface BlockButton {
@@ -94,7 +144,7 @@ export interface BlockGallery {
 	date_updated?: string | null;
 	user_updated?: DirectusUser | string | null;
 	/** @description Images to include in the image gallery. */
-	items?: DirectusFile[] | string[] | null;
+	items?: BlockGalleryItem[] | string[];
 }
 
 export interface BlockGalleryItem {
@@ -130,6 +180,9 @@ export interface BlockHero {
 	user_created?: DirectusUser | string | null;
 	date_updated?: string | null;
 	user_updated?: DirectusUser | string | null;
+	alt_text?: string | null;
+	custom_css?: string | null;
+	colour?: string | null;
 }
 
 export interface BlockPost {
@@ -206,22 +259,313 @@ export interface BlockRichtext {
 	user_updated?: DirectusUser | string | null;
 }
 
+export interface BrandKeyStat {
+	/** @primaryKey */
+	id: number;
+	title?: string | null;
+	content?: string | null;
+	brand?: Brand | string | null;
+	sort?: number | null;
+}
+
+export interface Brand {
+	/** @primaryKey */
+	id: string;
+	user_created?: DirectusUser | string | null;
+	date_created?: string | null;
+	user_updated?: DirectusUser | string | null;
+	date_updated?: string | null;
+	/** @description The brand's name as it will be seen on the website */
+	name?: string | null;
+	logo?: DirectusFile | string | null;
+	url_slug?: string | null;
+	cover_image?: DirectusFile | string | null;
+	description_title?: string | null;
+	description_content?: string | null;
+	key_stats?: BrandKeyStat[] | string[];
+}
+
+export interface BroadsheetImage {
+	/** @primaryKey */
+	id: string;
+	images?: BroadsheetImagesFile[] | string[];
+}
+
+export interface BroadsheetImagesFile {
+	/** @primaryKey */
+	id: number;
+	broadsheet_images_id?: BroadsheetImage | string | null;
+	directus_files_id?: DirectusFile | string | null;
+}
+
+export interface Category {
+	/** @primaryKey */
+	id: string;
+	name?: string | null;
+	sort?: number | null;
+	title?: string | null;
+	parent_category?: Category | string | null;
+	is_active?: boolean;
+	sub_categories?: Category[] | string[];
+}
+
+export interface CategoriesEi {
+	/** @primaryKey */
+	id: string;
+	name?: string | null;
+}
+
+export interface City {
+	/** @primaryKey */
+	id: string;
+	user_created?: DirectusUser | string | null;
+	date_created?: string | null;
+	user_updated?: DirectusUser | string | null;
+	date_updated?: string | null;
+	name?: string | null;
+	summary?: string | null;
+	overview_images?: CitiesFile[] | string[];
+}
+
+export interface CitiesFile {
+	/** @primaryKey */
+	id: number;
+	cities_id?: City | string | null;
+	directus_files_id?: DirectusFile | string | null;
+}
+
+export interface Community {
+	/** @primaryKey */
+	id: string;
+	user_created?: DirectusUser | string | null;
+	date_created?: string | null;
+	user_updated?: DirectusUser | string | null;
+	date_updated?: string | null;
+	title?: string | null;
+	/** @description Subtitle which is under the title */
+	location?: string | null;
+	icon?: DirectusFile | string | null;
+	geo_location?: string | null;
+	status?: 'now_selling' | 'coming_soon' | null;
+	for_retirement?: boolean | null;
+	slug?: string | null;
+	properties?: Property[] | string[];
+}
+
+export interface Continent {
+	/** @primaryKey */
+	id: string;
+	/** @required */
+	name: string;
+	/** @description Short code (e.g., EU, AS) */
+	code?: string | null;
+}
+
+export interface CookieConsent {
+	/** @primaryKey */
+	id: string;
+	user_created?: DirectusUser | string | null;
+	date_created?: string | null;
+	user_updated?: DirectusUser | string | null;
+	date_updated?: string | null;
+	essential_cookies?: boolean | null;
+	analytics_cookies?: boolean | null;
+	marketing_cookies?: boolean | null;
+	ip_address?: string | null;
+	user_agent?: string | null;
+	/** @description When last the user with this cookie accessed the site */
+	last_seen?: string | null;
+	money?: number | null;
+}
+
+export interface Country {
+	/** @primaryKey */
+	id: number;
+	name?: string | null;
+	parent?: Country | string | null;
+	children?: Country[] | string[];
+}
+
+export interface Country {
+	/** @primaryKey */
+	id: string;
+	/** @required */
+	name: string;
+	/** @description ISO Alpha-2 or Alpha-3 */
+	iso_code?: string | null;
+	continent?: Continent | string | null;
+	map?: string | null;
+	aircraft?: Aircraft[] | string[];
+	drones?: Drone[] | string[];
+	submarines?: Submarine[] | string[];
+	ships?: Ship[] | string[];
+}
+
+export interface Course {
+	/** @primaryKey */
+	id: string;
+	user_created?: DirectusUser | string | null;
+	date_created?: string | null;
+	user_updated?: DirectusUser | string | null;
+	date_updated?: string | null;
+	title?: string | null;
+	faculty?: Faculty | string | null;
+	students?: StudentsCourse[] | string[];
+}
+
+export interface Customer {
+	/** @primaryKey */
+	id: string;
+	name?: string | null;
+	email?: string | null;
+	interested_communities?: CustomerCommunity[] | string[];
+}
+
+export interface CustomerAddresse {
+	/** @primaryKey */
+	id: string;
+	sort?: number | null;
+	customer?: Customer | string | null;
+	address_line_1?: string | null;
+	address_line_2?: string | null;
+	city?: string | null;
+	state?: string | null;
+	postal_code?: string | null;
+	country_code?: string | null;
+	is_shipping?: boolean;
+	is_billing?: boolean;
+	is_active?: boolean;
+}
+
+export interface CustomerCommunity {
+	/** @primaryKey */
+	id: number;
+	customer_id?: Customer | string | null;
+	communities_id?: Community | string | null;
+}
+
+export interface Customer {
+	/** @description Unique identifier for customer @primaryKey */
+	id: string;
+	user_created?: DirectusUser | string | null;
+	date_created?: string | null;
+	user_updated?: DirectusUser | string | null;
+	date_updated?: string | null;
+	first_name?: string | null;
+	last_name?: string | null;
+	email?: string;
+	phone?: string | null;
+	password?: string | null;
+	/** @description Is customer subscribed to marketing emails? */
+	is_subscribed?: boolean | null;
+	orders?: Order[] | string[];
+	addresses?: CustomerAddresse[] | string[];
+}
+
+export interface DemoAutocomplete {
+	/** @primaryKey */
+	id: string;
+	csv_tags?: string[] | null;
+	lookup_relation?: LookupRelation[] | string[];
+}
+
+export interface DirectusSyncIdMap {
+	/** @primaryKey */
+	id: number;
+	table?: string;
+	sync_id?: string;
+	local_id?: string;
+	created_at?: string | null;
+}
+
+export interface Drone {
+	/** @primaryKey */
+	id: string;
+	/** @required */
+	name: string;
+	model?: string | null;
+	/** @description e.g., ISR, UCAV */
+	role?: string | null;
+	manufacturer?: string | null;
+	operator?: Country | string | null;
+	max_speed_kmh?: number | null;
+	range_km?: number | null;
+	endurance_hours?: number | null;
+	ceiling_m?: number | null;
+	introduced?: string | null;
+	/** @description operational, reserve, retired */
+	service_status?: string | null;
+	image?: DirectusFile | string | null;
+	country?: Country | string | null;
+}
+
+export interface Event {
+	/** @primaryKey */
+	id: string;
+	user_created?: DirectusUser | string | null;
+	date_created?: string | null;
+	user_updated?: DirectusUser | string | null;
+	date_updated?: string | null;
+	title?: string | null;
+	date_from?: string | null;
+	date_to?: string | null;
+	location?: string | null;
+}
+
+export interface Faculty {
+	/** @primaryKey */
+	id: string;
+	user_created?: DirectusUser | string | null;
+	date_created?: string | null;
+	user_updated?: DirectusUser | string | null;
+	date_updated?: string | null;
+	name?: string | null;
+}
+
+export interface Faq {
+	/** @primaryKey */
+	id: string;
+	sort?: number | null;
+	user_created?: DirectusUser | string | null;
+	date_created?: string | null;
+	user_updated?: DirectusUser | string | null;
+	date_updated?: string | null;
+	question?: string | null;
+	answer?: string | null;
+	published?: boolean | null;
+	section?: FaqSection | string | null;
+}
+
+export interface FaqSection {
+	/** @primaryKey */
+	id: string;
+	title?: string | null;
+	faqs?: Faq[] | string[];
+}
+
+export interface FeedNewsItem {
+	/** @primaryKey */
+	id: string;
+	user_created?: DirectusUser | string | null;
+	date_created?: string | null;
+	user_updated?: DirectusUser | string | null;
+	date_updated?: string | null;
+	image?: DirectusFile | string | null;
+	content?: string | null;
+	summary?: string | null;
+	published?: boolean | null;
+	sort?: number | null;
+	geo?: string | null;
+	comments?: NewsItemComment[] | string[];
+}
+
 export interface FormField {
 	/** @primaryKey */
 	id: string;
 	/** @description Unique field identifier, not shown to users (lowercase, hyphenated) */
 	name?: string | null;
 	/** @description Input type for the field */
-	type?:
-		| 'text'
-		| 'textarea'
-		| 'checkbox'
-		| 'checkbox_group'
-		| 'radio'
-		| 'file'
-		| 'select'
-		| 'hidden'
-		| null;
+	type?: 'text' | 'textarea' | 'checkbox' | 'checkbox_group' | 'radio' | 'file' | 'select' | 'hidden' | null;
 	/** @description Text label shown to form users. */
 	label?: string | null;
 	/** @description Default text shown in empty input. */
@@ -304,19 +648,7 @@ export interface Globals {
 	/** @primaryKey */
 	id: string;
 	/** @description Social media profile URLs */
-	social_links?: Array<{
-		url: string;
-		service:
-			| 'facebook'
-			| 'instagram'
-			| 'linkedin'
-			| 'x'
-			| 'vimeo'
-			| 'youtube'
-			| 'github'
-			| 'discord'
-			| 'docker';
-	}> | null;
+	social_links?: Array<{ url: string; service: 'facebook' | 'instagram' | 'linkedin' | 'x' | 'vimeo' | 'youtube' | 'github' | 'discord' | 'docker' }> | null;
 	/** @description Short phrase describing the site. */
 	tagline?: string | null;
 	/** @description Main site title */
@@ -331,14 +663,42 @@ export interface Globals {
 	openai_api_key?: string | null;
 	/** @description The public URL for this Directus instance. Used in Flows. */
 	directus_url?: string | null;
-	/** @description Accent color for the website (used on buttons, links, etc). */
-	accent_color?: string | null;
 	/** @description Main logo shown on the site (for dark mode). */
 	logo_dark_mode?: DirectusFile | string | null;
+	/** @description Accent color for the website (used on buttons, links, etc). */
+	accent_color?: string | null;
 	date_created?: string | null;
 	user_created?: DirectusUser | string | null;
 	date_updated?: string | null;
 	user_updated?: DirectusUser | string | null;
+}
+
+export interface Kudo {
+	/** @primaryKey */
+	id: string;
+	user_created?: DirectusUser | string | null;
+	date_created?: string | null;
+	user_updated?: DirectusUser | string | null;
+	date_updated?: string | null;
+	badge?: string | null;
+	message?: string | null;
+	from_user?: DirectusUser | string | null;
+	to_user?: DirectusUser | string | null;
+}
+
+export interface Language {
+	/** @primaryKey */
+	code: string;
+	name?: string | null;
+	direction?: 'ltr' | 'rtl' | null;
+}
+
+export interface LookupRelation {
+	/** @primaryKey */
+	id: number;
+	demo_id?: DemoAutocomplete | string | null;
+	autocomplete?: string | null;
+	sort?: number | null;
 }
 
 export interface Navigation {
@@ -382,6 +742,57 @@ export interface NavigationItem {
 	children?: NavigationItem[] | string[];
 }
 
+export interface NewsItemComment {
+	/** @primaryKey */
+	id: string;
+	user_created?: DirectusUser | string | null;
+	date_created?: string | null;
+	user_updated?: DirectusUser | string | null;
+	date_updated?: string | null;
+	comments?: string | null;
+	news_item?: FeedNewsItem | string | null;
+}
+
+export interface OrderItem {
+	/** @primaryKey */
+	id: string;
+	sort?: number | null;
+	quantity?: number | null;
+	product?: Product | string | null;
+	subtotal?: number | null;
+	total?: number | null;
+	order?: Order | string | null;
+	price?: number | null;
+	product_variant?: ProductVariant | string | null;
+}
+
+export interface Order {
+	/** @primaryKey */
+	id: string;
+	status?: 'pending' | 'completed' | 'archived' | 'canceled';
+	user_created?: DirectusUser | string | null;
+	date_created?: string | null;
+	user_updated?: DirectusUser | string | null;
+	date_updated?: string | null;
+	customer?: Customer | string | null;
+	fulfillment_status?: 'open' | 'in_progress' | 'fulfilled' | 'on_hold' | null;
+	payment_status?: 'not_paid' | 'awaiting' | 'paid' | 'refunded' | null;
+	billing_address?: CustomerAddresse | string | null;
+	shipping_address?: CustomerAddresse | string | null;
+	completed_at?: string | null;
+	canceled_at?: string | null;
+	order_number?: string | null;
+	/** @description Subtotal for entire order before taxes and shipping */
+	subtotal?: number | null;
+	/** @description Total amount for the entire order */
+	total?: number | null;
+	/** @description Tax amount owed for entire order */
+	tax_total?: number | null;
+	/** @description Shipping amount owed for entire order */
+	shipping_total?: number | null;
+	line_items?: OrderItem[] | string[];
+}
+
 export interface PageBlock {
 	/** @primaryKey */
 	id: string;
@@ -389,15 +800,7 @@ export interface PageBlock {
 	/** @description The id of the page that this block belongs to. */
 	page?: Page | string | null;
 	/** @description The data for the block. */
-	item?:
-		| BlockHero
-		| BlockRichtext
-		| BlockForm
-		| BlockPost
-		| BlockGallery
-		| BlockPricing
-		| string
-		| null;
+	item?: BlockHero | BlockRichtext | BlockForm | BlockPost | BlockGallery | BlockPricing | string | null;
 	/** @description The collection (type of block). */
 	collection?: string | null;
 	/** @description Temporarily hide this block on the website without having to remove it from your page. */
@@ -427,6 +830,8 @@ export interface Page {
 	user_created?: DirectusUser | string | null;
 	date_updated?: string | null;
 	user_updated?: DirectusUser | string | null;
+	legacy?: Record<string, any> | null;
+	site?: Site | string | null;
 	/** @description Create and arrange different content blocks (like text, images, or videos) to build your page. */
 	blocks?: PageBlock[] | string[];
 }
@@ -456,6 +861,171 @@ export interface Post {
 	user_created?: DirectusUser | string | null;
 	date_updated?: string | null;
 	user_updated?: DirectusUser | string | null;
+	post_icon?: string | null;
+	audio_clip?: DirectusFile | string | null;
+	content_type?: 'plumbing' | 'electrical' | null;
+	md?: string | null;
+	target_user?: 'landlord' | 'business' | null;
+	site?: Site | string | null;
+	site_a_specific?: SiteASpecific | string | null;
+	related_posts?: PostsPost[] | string[];
+	translations?: PostsTranslation[] | null;
+	categories?: PostWebsiteCategory[] | string[];
+}
+
+export interface PostsPost {
+	/** @primaryKey */
+	id: number;
+	posts_id?: Post | string | null;
+	related_posts_id?: Post | string | null;
+}
+
+export interface PostsTranslation {
+	/** @primaryKey */
+	id: number;
+	posts_id?: Post | string | null;
+	languages_code?: Language | string | null;
+	/** @required */
+	title: string;
+	content?: string | null;
+}
+
+export interface PostWebsiteCategory {
+	/** @primaryKey */
+	id: string;
+	website?: Site | string | null;
+	post?: Post | string | null;
+	categories?: PostWebsiteCategoryCategoriesEi[] | string[];
+}
+
+export interface PostWebsiteCategoryCategoriesEi {
+	/** @primaryKey */
+	id: number;
+	post_website_category_id?: PostWebsiteCategory | string | null;
+	categories_eis_id?: CategoriesEi | string | null;
+}
+
+export interface ProductImage {
+	/** @primaryKey */
+	id: string;
+	product?: Product | string | null;
+	file?: DirectusFile | string | null;
+	sort?: number | null;
+}
+
+export interface Product {
+	/** @primaryKey */
+	id: string;
+	user_created?: DirectusUser | string | null;
+	date_created?: string | null;
+	user_updated?: DirectusUser | string | null;
+	date_updated?: string | null;
+	name?: string | null;
+	/** @description Enter a valid SAP code */
+	SAP_code?: string | null;
+	/** @description Unique URL for this product */
+	slug?: string | null;
+	description?: string | null;
+	status?: 'draft' | 'published' | null;
+	require_prescription?: boolean | null;
+	sort?: number | null;
+	/** @description Name of this product */
+	title?: string | null;
+	/** @description Main thumbnail used for this product */
+	thumbnail?: DirectusFile | string | null;
+	/** @description What colors are available? */
+	color?: 'gray' | null;
+	/** @description What sizes are available? */
+	size?: 'gray' | null;
+	category?: Category | string | null;
+	publish__date?: string | null;
+	categories?: ProductsCategory[] | string[];
+	gallery?: ProductsFile[] | string[];
+	documents?: ProductsFiles1[] | string[];
+	variants?: ProductVariant[] | string[];
+	/** @description Gallery of images featured on the product page */
+	images?: ProductImage[] | string[];
+}
+
+export interface ProductsCategory {
+	/** @primaryKey */
+	id: number;
+	products_id?: Product | string | null;
+	categories_id?: Category | string | null;
+}
+
+export interface ProductsFile {
+	/** @primaryKey */
+	id: number;
+	products_id?: Product | string | null;
+	directus_files_id?: DirectusFile | string | null;
+}
+
+export interface ProductsFiles1 {
+	/** @primaryKey */
+	id: number;
+	products_id?: Product | string | null;
+	directus_files_id?: DirectusFile | string | null;
+}
+
+export interface ProductVariant {
+	/** @primaryKey */
+	id: string;
+	product?: Product | string | null;
+	price?: number | null;
+	sku?: string | null;
+	image?: DirectusFile | string | null;
+	color?: string | null;
+	size?: string | null;
+	weight?: number | null;
+	weight_unit?: 'g' | 'kg' | 'lb' | 'oz' | null;
+}
+
+export interface Property {
+	/** @primaryKey */
+	id: string;
+	user_created?: DirectusUser | string | null;
+	date_created?: string | null;
+	user_updated?: DirectusUser | string | null;
+	date_updated?: string | null;
+	price?: number | null;
+	title?: string | null;
+	community?: Community | string | null;
+	delivery_date?: string | null;
+	bedrooms?: number | null;
+	bathrooms?: number | null;
+	type?: 'townhome' | 'house' | 'apartment' | null;
+	sq_ft?: number | null;
+	parking?: string | null;
+	interior_finishes?: string | null;
+	structual_features?: string | null;
+	energy_efficient_living?: string | null;
+	slug?: string | null;
+	address?: PropertyAddresse | string | null;
+	images?: PropertiesFile[] | string[];
+}
+
+export interface PropertiesFile {
+	/** @primaryKey */
+	id: number;
+	properties_id?: Property | string | null;
+	directus_files_id?: DirectusFile | string | null;
+	sort?: number | null;
+}
+
+export interface PropertyAddresse {
+	/** @primaryKey */
+	id: string;
+	/** @required */
+	street1: string;
+	street2?: string | null;
+	/** @required */
+	city: string;
+	state?: string | null;
+	/** @required */
+	postal_code: string;
+	/** @required */
+	country: string;
 }
 
 export interface Redirect {
@@ -472,6 +1042,153 @@ export interface Redirect {
 	user_created?: DirectusUser | string | null;
 	date_updated?: string | null;
 	user_updated?: DirectusUser | string | null;
+}
+
+export interface Rental {
+	/** @primaryKey */
+	id: string;
+	/** @required */
+	property: Property | string;
+	/** @required */
+	start_date: string;
+	end_date?: string | null;
+	/** @required */
+	rent_amount: number;
+	/** @required */
+	payment_frequency: 'monthly' | 'weekly' | 'yearly';
+	terms?: string | null;
+}
+
+export interface Ship {
+	/** @primaryKey */
+	id: string;
+	/** @required */
+	name: string;
+	class?: string | null;
+	/** @description e.g., destroyer, frigate */
+	type?: string | null;
+	operator?: Country | string | null;
+	displacement_tons?: number | null;
+	crew?: number | null;
+	commissioned?: string | null;
+	/** @description operational, reserve, decommissioned */
+	service_status?: string | null;
+	country?: Country | string | null;
+	image?: DirectusFile | string | null;
+}
+
+export interface SiteASpecific {
+	/** @primaryKey */
+	id: string;
+	user_created?: DirectusUser | string | null;
+	date_created?: string | null;
+	user_updated?: DirectusUser | string | null;
+	date_updated?: string | null;
+	name?: string | null;
+}
+
+export interface Site {
+	/** @primaryKey */
+	id: string;
+	user_created?: DirectusUser | string | null;
+	date_created?: string | null;
+	user_updated?: DirectusUser | string | null;
+	date_updated?: string | null;
+	title?: string | null;
+	url?: string | null;
+	crm_lookup?: string | null;
+	pages?: Page[] | string[];
+	posts?: Post[] | string[];
+	site_managers?: SitesDirectusUser[] | string[];
+}
+
+export interface SitesDirectusUser {
+	/** @primaryKey */
+	id: number;
+	sites_id?: Site | string | null;
+	directus_users_id?: DirectusUser | string | null;
+}
+
+export interface Student {
+	/** @primaryKey */
+	id: string;
+	user_created?: DirectusUser | string | null;
+	date_created?: string | null;
+	user_updated?: DirectusUser | string | null;
+	date_updated?: string | null;
+	firstName?: string | null;
+	lastName?: string | null;
+	status?: 'prospective' | 'current' | 'alumni' | null;
+	email?: string | null;
+	phone_number?: string | null;
+	courses?: StudentsCourse[] | string[];
+}
+
+export interface StudentsCourse {
+	/** @primaryKey */
+	id: number;
+	students_id?: Student | string | null;
+	courses_id?: Course | string | null;
+	enrollment_date?: string | null;
+}
+
+export interface Submarine {
+	/** @primaryKey */
+	id: string;
+	/** @required */
+	name: string;
+	class?: string | null;
+	/** @description e.g., nuclear, diesel-electric */
+	type?: string | null;
+	operator?: Country | string | null;
+	displacement_tons?: number | null;
+	max_depth_meters?: number | null;
+	crew?: number | null;
+	commissioned?: string | null;
+	/** @description operational, reserve, decommissioned */
+	service_status?: string | null;
+	country?: Country | string | null;
+	image?: DirectusFile | string | null;
+	location?: string | null;
+	image_gallery?: SubmarinesFile[] | string[];
+}
+
+export interface SubmarinesFile {
+	/** @primaryKey */
+	id: number;
+	submarines_id?: Submarine | string | null;
+	directus_files_id?: DirectusFile | string | null;
+}
+
+export interface TaxRate {
+	/** @primaryKey */
+	id: string;
+	title?: string | null;
+	rate?: number | null;
+	code?: string | null;
+}
+
+export interface WebsiteLogin {
+	/** @primaryKey */
+	id: string;
+	user_created?: DirectusUser | string | null;
+	date_created?: string | null;
+	user_updated?: DirectusUser | string | null;
+	date_updated?: string | null;
+	user?: WebsiteUser | string | null;
+	url?: string | null;
+}
+
+export interface WebsiteUser {
+	/** @primaryKey */
+	id: string;
+	date_created?: string | null;
+	date_updated?: string | null;
+	directus_user?: DirectusUser | string | null;
+	membership_type?: 'landlord' | 'business' | null;
+	signup_date?: string | null;
+	cancellation_date?: string | null;
+	login_history?: WebsiteLogin[] | string[];
 }
 
 export interface DirectusAccess {
@@ -505,12 +1222,7 @@ export interface DirectusCollection {
 	display_template?: string | null;
 	hidden?: boolean;
 	singleton?: boolean;
-	translations?: Array<{
-		language: string;
-		translation: string;
-		singular: string;
-		plural: string;
-	}> | null;
+	translations?: Array<{ language: string; translation: string; singular: string; plural: string }> | null;
 	archive_field?: string | null;
 	archive_app_filter?: boolean;
 	archive_value?: string | null;
@@ -589,6 +1301,8 @@ export interface DirectusFile {
 	tus_id?: string | null;
 	tus_data?: 'json' | null;
 	uploaded_on?: string | null;
+	category?: 'a' | 'b' | null;
+	slug?: string | null;
 }
 
 export interface DirectusFolder {
@@ -712,31 +1426,12 @@ export interface DirectusSettings {
 	public_background?: DirectusFile | string | null;
 	public_note?: string | null;
 	auth_login_attempts?: number | null;
-	auth_password_policy?:
-		| null
-		| `/^.{8,}$/`
-		| `/(?=^.{8,}$)(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+}{';'?>.<,])(?!.*\\s).*$/`
-		| null;
+	auth_password_policy?: null | `/^.{8,}$/` | `/(?=^.{8,}$)(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+}{';'?>.<,])(?!.*\\s).*$/` | null;
 	storage_asset_transform?: 'all' | 'none' | 'presets' | null;
-	storage_asset_presets?: Array<{
-		key: string;
-		fit: 'contain' | 'cover' | 'inside' | 'outside';
-		width: number;
-		height: number;
-		quality: number;
-		withoutEnlargement: boolean;
-		format: 'auto' | 'jpeg' | 'png' | 'webp' | 'tiff' | 'avif';
-		transforms: 'json';
-	}> | null;
+	storage_asset_presets?: Array<{ key: string; fit: 'contain' | 'cover' | 'inside' | 'outside'; width: number; height: number; quality: number; withoutEnlargement: boolean; format: 'auto' | 'jpeg' | 'png' | 'webp' | 'tiff' | 'avif'; transforms: 'json' }> | null;
 	custom_css?: string | null;
 	storage_default_folder?: DirectusFolder | string | null;
-	basemaps?: Array<{
-		name: string;
-		type: 'raster' | 'tile' | 'style';
-		url: string;
-		tileSize: number;
-		attribution: string;
-	}> | null;
+	basemaps?: Array<{ name: string; type: 'raster' | 'tile' | 'style'; url: string; tileSize: number; attribution: string }> | null;
 	mapbox_key?: string | null;
 	module_bar?: 'json' | null;
 	project_descriptor?: string | null;
@@ -755,9 +1450,18 @@ export interface DirectusSettings {
 	public_registration_verify_email?: boolean;
 	public_registration_role?: DirectusRole | string | null;
 	public_registration_email_filter?: 'json' | null;
+	visual_editor_urls?: Array<{ url: string }> | null;
+	accepted_terms?: boolean | null;
+	project_id?: string | null;
 	/** @description Settings for the Command Palette Module. */
 	command_palette_settings?: Record<string, any> | null;
-	visual_editor_urls?: Array<{ url: string }> | null;
+	collaborative_editing_settings?: Record<string, any> | null;
+	mcp_enabled?: boolean;
+	mcp_allow_deletes?: boolean;
+	mcp_prompts_collection?: string | null;
+	mcp_system_prompt_enabled?: boolean;
+	mcp_system_prompt?: string | null;
+	flow_manager_categories?: Record<string, any> | null;
 }
 
 export interface DirectusUser {
@@ -779,7 +1483,7 @@ export interface DirectusUser {
 	token?: string | null;
 	last_access?: string | null;
 	last_page?: string | null;
-	provider?: string;
+	provider?: 'auth0' | 'google' | 'microsoft' | 'micro';
 	external_identifier?: string | null;
 	auth_data?: 'json' | null;
 	email_notifications?: boolean | null;
@@ -788,8 +1492,11 @@ export interface DirectusUser {
 	theme_light?: string | null;
 	theme_light_overrides?: 'json' | null;
 	theme_dark_overrides?: 'json' | null;
+	text_direction?: 'auto' | 'ltr' | 'rtl';
+	site?: Site | string | null;
 	/** @description Blog posts this user has authored. */
 	posts?: Post[] | string[];
+	sites?: SitesDirectusUser[] | string[];
 	policies?: DirectusAccess[] | string[];
 }
 
@@ -882,6 +1589,10 @@ export interface DirectusFlow {
 	operation?: DirectusOperation | string | null;
 	date_created?: string | null;
 	user_created?: DirectusUser | string | null;
+	flow_manager_category?: string | null;
+	flow_manager_order?: number | null;
+	flow_manager_last_run_at?: string | null;
+	flow_manager_run_counter?: number | null;
 	operations?: DirectusOperation[] | string[];
 }
 
@@ -938,6 +1649,10 @@ export interface DirectusExtension {
 
 export interface Schema {
 	ai_prompts: AiPrompt[];
+	aircraft: Aircraft[];
+	announcements: Announcement[];
+	announcements_files: AnnouncementsFile[];
+	areas: Area[];
 	block_button: BlockButton[];
 	block_button_group: BlockButtonGroup[];
 	block_form: BlockForm[];
@@ -948,17 +1663,74 @@ export interface Schema {
 	block_pricing: BlockPricing[];
 	block_pricing_cards: BlockPricingCard[];
 	block_richtext: BlockRichtext[];
+	brand_key_stats: BrandKeyStat[];
+	brands: Brand[];
+	broadsheet_images: BroadsheetImage[];
+	broadsheet_images_files: BroadsheetImagesFile[];
+	categories: Category[];
+	categories_eis: CategoriesEi[];
+	cities: City[];
+	cities_files: CitiesFile[];
+	communities: Community[];
+	continent: Continent[];
+	cookie_consents: CookieConsent[];
+	countries: Country[];
+	country: Country[];
+	courses: Course[];
+	customer: Customer[];
+	customer_addresses: CustomerAddresse[];
+	customer_communities: CustomerCommunity[];
+	customers: Customer[];
+	demo_autocomplete: DemoAutocomplete[];
+	directus_sync_id_map: DirectusSyncIdMap[];
+	drones: Drone[];
+	events: Event[];
+	faculties: Faculty[];
+	faqs: Faq[];
+	faq_section: FaqSection[];
+	feed_news_item: FeedNewsItem[];
 	form_fields: FormField[];
 	forms: Form[];
 	form_submissions: FormSubmission[];
 	form_submission_values: FormSubmissionValue[];
 	globals: Globals;
+	kudos: Kudo[];
+	languages: Language[];
+	lookup_relation: LookupRelation[];
 	navigation: Navigation[];
 	navigation_items: NavigationItem[];
+	news_item_comment: NewsItemComment[];
+	order_items: OrderItem[];
+	orders: Order[];
 	page_blocks: PageBlock[];
 	pages: Page[];
 	posts: Post[];
+	posts_posts: PostsPost[];
+	posts_translations: PostsTranslation[];
+	post_website_category: PostWebsiteCategory[];
+	post_website_category_categories_eis: PostWebsiteCategoryCategoriesEi[];
+	product_images: ProductImage[];
+	products: Product[];
+	products_categories: ProductsCategory[];
+	products_files: ProductsFile[];
+	products_files_1: ProductsFiles1[];
+	product_variants: ProductVariant[];
+	properties: Property[];
+	properties_files: PropertiesFile[];
+	property_addresses: PropertyAddresse[];
 	redirects: Redirect[];
+	rentals: Rental[];
+	ships: Ship[];
+	site_a_specific: SiteASpecific[];
+	sites: Site[];
+	sites_directus_users: SitesDirectusUser[];
+	students: Student[];
+	students_courses: StudentsCourse[];
+	submarines: Submarine[];
+	submarines_files: SubmarinesFile[];
+	tax_rates: TaxRate[];
+	website_logins: WebsiteLogin[];
+	website_user: WebsiteUser[];
 	directus_access: DirectusAccess[];
 	directus_activity: DirectusActivity[];
 	directus_collections: DirectusCollection[];
@@ -990,6 +1762,10 @@ export interface Schema {
 
 export enum CollectionNames {
 	ai_prompts = 'ai_prompts',
+	aircraft = 'aircraft',
+	announcements = 'announcements',
+	announcements_files = 'announcements_files',
+	areas = 'areas',
 	block_button = 'block_button',
 	block_button_group = 'block_button_group',
 	block_form = 'block_form',
@@ -1000,17 +1776,74 @@ export enum CollectionNames {
 	block_pricing = 'block_pricing',
 	block_pricing_cards = 'block_pricing_cards',
 	block_richtext = 'block_richtext',
+	brand_key_stats = 'brand_key_stats',
+	brands = 'brands',
+	broadsheet_images = 'broadsheet_images',
+	broadsheet_images_files = 'broadsheet_images_files',
+	categories = 'categories',
+	categories_eis = 'categories_eis',
+	cities = 'cities',
+	cities_files = 'cities_files',
+	communities = 'communities',
+	continent = 'continent',
+	cookie_consents = 'cookie_consents',
+	countries = 'countries',
+	country = 'country',
+	courses = 'courses',
+	customer = 'customer',
+	customer_addresses = 'customer_addresses',
+	customer_communities = 'customer_communities',
+	customers = 'customers',
+	demo_autocomplete = 'demo_autocomplete',
+	directus_sync_id_map = 'directus_sync_id_map',
+	drones = 'drones',
+	events = 'events',
+	faculties = 'faculties',
+	faqs = 'faqs',
+	faq_section = 'faq_section',
+	feed_news_item = 'feed_news_item',
 	form_fields = 'form_fields',
 	forms = 'forms',
 	form_submissions = 'form_submissions',
 	form_submission_values = 'form_submission_values',
 	globals = 'globals',
+	kudos = 'kudos',
+	languages = 'languages',
+	lookup_relation = 'lookup_relation',
 	navigation = 'navigation',
 	navigation_items = 'navigation_items',
+	news_item_comment = 'news_item_comment',
+	order_items = 'order_items',
+	orders = 'orders',
 	page_blocks = 'page_blocks',
 	pages = 'pages',
 	posts = 'posts',
+	posts_posts = 'posts_posts',
+	posts_translations = 'posts_translations',
+	post_website_category = 'post_website_category',
+	post_website_category_categories_eis = 'post_website_category_categories_eis',
+	product_images = 'product_images',
+	products = 'products',
+	products_categories = 'products_categories',
+	products_files = 'products_files',
+	products_files_1 = 'products_files_1',
+	product_variants = 'product_variants',
+	properties = 'properties',
+	properties_files = 'properties_files',
+	property_addresses = 'property_addresses',
 	redirects = 'redirects',
+	rentals = 'rentals',
+	ships = 'ships',
+	site_a_specific = 'site_a_specific',
+	sites = 'sites',
+	sites_directus_users = 'sites_directus_users',
+	students = 'students',
+	students_courses = 'students_courses',
+	submarines = 'submarines',
+	submarines_files = 'submarines_files',
+	tax_rates = 'tax_rates',
+	website_logins = 'website_logins',
+	website_user = 'website_user',
 	directus_access = 'directus_access',
 	directus_activity = 'directus_activity',
 	directus_collections = 'directus_collections',

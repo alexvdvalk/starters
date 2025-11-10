@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { invalidateAll } from '$app/navigation';
+	import { afterNavigate, invalidateAll } from '$app/navigation';
 	import { page } from '$app/state';
 	import { PUBLIC_DIRECTUS_URL } from '$env/static/public';
 	import PageBuilder from '$lib/components/layout/PageBuilder.svelte';
@@ -17,20 +17,22 @@
 		);
 	});
 
-	$effect(() => {
-		if (page.data.visualEditingEnabled && data.id) {
-			applyVisualEditing();
-		}
+	afterNavigate(() => {
+		console.log('afterNavigate', page.data.visualEditingEnabled);
+		// if (page.data.visualEditingEnabled) {
+		applyVisualEditing();
+		// }
 	});
 
 	const applyVisualEditing = async () => {
+		console.log('applyVisualEditing', page.url.pathname);
 		const { apply } = await import('@directus/visual-editing');
-		apply({
-			directusUrl: PUBLIC_DIRECTUS_URL,
-			onSaved: async () => {
-				await invalidateAll();
-			}
-		});
+		// apply({
+		// 	directusUrl: PUBLIC_DIRECTUS_URL,
+		// 	onSaved: async () => {
+		// 		await invalidateAll();
+		// 	}
+		// });
 
 		apply({
 			directusUrl: PUBLIC_DIRECTUS_URL,

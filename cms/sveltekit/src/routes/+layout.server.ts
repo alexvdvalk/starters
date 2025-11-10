@@ -2,8 +2,12 @@ import { fetchSiteData } from '$lib/directus/fetchers';
 import type { LayoutServerLoad } from './$types';
 
 import { PUBLIC_ENABLE_VISUAL_EDITING } from '$env/static/public';
+// import { fetchCookieConsent } from '$lib/directus/cookie-consent';
 
 export const load = (async (event) => {
+
+
+	// const cookieConsent = await fetchCookieConsent(event);
 
 	const visualEditingEnabled = event.url.searchParams.get('visual-editing') === 'true' && PUBLIC_ENABLE_VISUAL_EDITING === 'true';
 	const { globals, headerNavigation, footerNavigation } = await fetchSiteData(event.fetch);

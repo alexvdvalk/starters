@@ -4,6 +4,7 @@ import { generateDirectusTypes } from 'directus-sdk-typegen';
 config();
 
 async function generateTypes() {
+	console.log('env', process.env);
 	const directusUrl = process.env.PUBLIC_DIRECTUS_URL;
 	const directusToken = process.env.PUBLIC_DIRECTUS_TOKEN;
 

@@ -8,6 +8,7 @@
 	import { page } from '$app/state';
 	import { onMount } from 'svelte';
 	import { PUBLIC_DIRECTUS_URL } from '$env/static/public';
+	import CookieConsentDrawer from '$lib/components/CookieConsentDrawer.svelte';
 
 	let { children, data } = $props();
 
@@ -40,6 +41,7 @@
 	{@html `<style>:root{ --accent-color: ${accentColor} !important }</style>`}
 </svelte:head>
 
+<!-- <CookieConsentDrawer /> -->
 <ModeWatcher />
 <NavigationBar />
 <main class="flex-grow">{@render children()}</main>
