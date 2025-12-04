@@ -7,8 +7,8 @@ export function getDirectusAssetURL(
 	if (!fileOrString) return '';
 
 	if (typeof fileOrString === 'string') {
-		return `${PUBLIC_DIRECTUS_URL}/assets/${fileOrString}`;
+		return `${PUBLIC_DIRECTUS_URL}assets/${fileOrString}`;
 	}
 
-	return `${PUBLIC_DIRECTUS_URL}/assets/${fileOrString.id}`;
+	return `${PUBLIC_DIRECTUS_URL}assets/${fileOrString.id}`;
 }
