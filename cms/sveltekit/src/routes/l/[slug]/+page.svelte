@@ -10,6 +10,7 @@
 	import { Card, CardContent, CardTitle } from '$lib/components/ui/card';
 	import { Calendar, Star, ExternalLink } from '@lucide/svelte';
 	import { PUBLIC_DIRECTUS_URL } from '$env/static/public';
+	import { page } from '$app/state';
 
 	let { params }: PageProps = $props();
 
@@ -308,7 +309,9 @@
 	</Container>
 </section>
 
-<!-- <pre>{JSON.stringify(location, null, 2)}</pre> -->
+{#if page.url.searchParams.get('debug') === 'true'}
+	<pre>{JSON.stringify(location, null, 2)}</pre>
+{/if}
 
 <!-- Debug (remove in production) -->
 <!-- <Container class="py-8">
