@@ -81,6 +81,21 @@ export interface Area {
 	date_updated?: string | null;
 }
 
+export interface Attraction {
+	/** @primaryKey */
+	id: string;
+	status?: 'published' | 'draft' | 'archived';
+	sort?: number | null;
+	user_created?: DirectusUser | string | null;
+	date_created?: string | null;
+	user_updated?: DirectusUser | string | null;
+	date_updated?: string | null;
+	/** @required */
+	title: string;
+	description?: string | null;
+	location?: string | null;
+}
+
 export interface BlockButton {
 	/** @primaryKey */
 	id: string;
@@ -183,6 +198,7 @@ export interface BlockHero {
 	alt_text?: string | null;
 	custom_css?: string | null;
 	colour?: string | null;
+	show_on_mobile?: boolean | null;
 }
 
 export interface BlockPost {
@@ -283,19 +299,6 @@ export interface Brand {
 	description_title?: string | null;
 	description_content?: string | null;
 	key_stats?: BrandKeyStat[] | string[];
-}
-
-export interface BroadsheetImage {
-	/** @primaryKey */
-	id: string;
-	images?: BroadsheetImagesFile[] | string[];
-}
-
-export interface BroadsheetImagesFile {
-	/** @primaryKey */
-	id: number;
-	broadsheet_images_id?: BroadsheetImage | string | null;
-	directus_files_id?: DirectusFile | string | null;
 }
 
 export interface Category {
@@ -444,6 +447,17 @@ export interface CustomerCommunity {
 	communities_id?: Community | string | null;
 }
 
+export interface CustomerProfile {
+	/** @primaryKey */
+	id: string;
+	user_created?: DirectusUser | string | null;
+	date_created?: string | null;
+	user_updated?: DirectusUser | string | null;
+	date_updated?: string | null;
+	name?: string | null;
+	status?: 'active' | null;
+}
+
 export interface Customer {
 	/** @description Unique identifier for customer @primaryKey */
 	id: string;
@@ -460,13 +474,6 @@ export interface Customer {
 	is_subscribed?: boolean | null;
 	orders?: Order[] | string[];
 	addresses?: CustomerAddresse[] | string[];
-}
-
-export interface DemoAutocomplete {
-	/** @primaryKey */
-	id: string;
-	csv_tags?: string[] | null;
-	lookup_relation?: LookupRelation[] | string[];
 }
 
 export interface DirectusSyncIdMap {
@@ -671,6 +678,8 @@ export interface Globals {
 	user_created?: DirectusUser | string | null;
 	date_updated?: string | null;
 	user_updated?: DirectusUser | string | null;
+	autocomplete_domain?: string | null;
+	Autocomplete?: string | null;
 }
 
 export interface Kudo {
@@ -691,14 +700,130 @@ export interface Language {
 	code: string;
 	name?: string | null;
 	direction?: 'ltr' | 'rtl' | null;
+	slug?: string | null;
 }
 
 export interface LookupRelation {
 	/** @primaryKey */
 	id: number;
-	demo_id?: DemoAutocomplete | string | null;
 	autocomplete?: string | null;
 	sort?: number | null;
+}
+
+export interface Machine {
+	/** @primaryKey */
+	id: string;
+	user_created?: DirectusUser | string | null;
+	date_created?: string | null;
+	user_updated?: DirectusUser | string | null;
+	date_updated?: string | null;
+	/** @description Machine name or identifier @required */
+	name: string;
+	machine_type?: MachineType | string | null;
+	manufacturer?: string | null;
+	model?: string | null;
+	serial_number?: string | null;
+	site?: Site | string | null;
+	area?: Area | string | null;
+	status?: 'operational' | 'maintenance' | 'offline' | 'decommissioned' | null;
+	installation_date?: string | null;
+	warranty_expiry?: string | null;
+	/** @description Power rating in kilowatts */
+	power_rating_kw?: number | null;
+	/** @description Operating voltage (V) */
+	voltage?: number | null;
+	/** @description Current rating (A) */
+	current_rating?: number | null;
+	/** @description Frequency (Hz) */
+	frequency?: number | null;
+	/** @description For generators */
+	fuel_type?: 'diesel' | 'gasoline' | 'natural_gas' | 'propane' | 'biodiesel' | 'na' | null;
+	/** @description Fuel tank capacity in liters (for generators) */
+	fuel_capacity_liters?: number | null;
+	/** @description Engine model (for generators) */
+	engine_model?: string | null;
+	/** @description Total engine operating hours (for generators) */
+	engine_hours?: number | null;
+	/** @description Number of solar panels */
+	panel_count?: number | null;
+	/** @description Individual panel capacity in watts */
+	panel_capacity_w?: number | null;
+	/** @description Inverter model (for solar systems) */
+	inverter_model?: string | null;
+	/** @description Battery capacity in kilowatt-hours */
+	battery_capacity_kwh?: number | null;
+	/** @description Battery chemistry type */
+	battery_type?: 'lithium_ion' | 'lead_acid' | 'nickel_cadmium' | 'flow_battery' | 'other' | null;
+	/** @description Battery nominal voltage (V) */
+	battery_voltage?: number | null;
+	notes?: string | null;
+	telemetry?: MachineTelemetry[] | string[];
+	maintenance_records?: MaintenanceRecord[] | string[];
+}
+
+export interface MachineTelemetry {
+	/** @primaryKey */
+	id: string;
+	user_created?: DirectusUser | string | null;
+	date_created?: string | null;
+	user_updated?: DirectusUser | string | null;
+	date_updated?: string | null;
+	machine?: Machine | string | null;
+	/** @required */
+	timestamp: string;
+	/** @description Current power output in kilowatts */
+	power_output_kw?: number | null;
+	/** @description Current power input in kilowatts (for batteries/charging) */
+	power_input_kw?: number | null;
+	/** @description Measured voltage (V) */
+	voltage?: number | null;
+	/** @description Measured current (A) */
+	current?: number | null;
+	/** @description Frequency (Hz) */
+	frequency?: number | null;
+	/** @description Temperature in Celsius */
+	temperature?: number | null;
+	/** @description Fuel tank level percentage (0-100) for generators */
+	fuel_level_percent?: number | null;
+	/** @description Battery state of charge percentage (0-100) */
+	battery_state_of_charge?: number | null;
+	/** @description Battery voltage (V) */
+	battery_voltage?: number | null;
+	/** @description Solar irradiance in W/m² */
+	solar_irradiance?: number | null;
+	/** @description Cumulative runtime hours (for generators) */
+	runtime_hours?: number | null;
+	operational_status?: 'running' | 'idle' | 'charging' | 'discharging' | 'standby' | 'fault' | 'offline' | null;
+	/** @description JSON array of active alarms/warnings */
+	alarms?: Record<string, any> | null;
+}
+
+export interface MachineType {
+	/** @primaryKey */
+	id: string;
+	/** @required */
+	name: string;
+	description?: string | null;
+	category?: 'generator' | 'solar' | 'battery' | 'inverter' | 'other' | null;
+}
+
+export interface MaintenanceRecord {
+	/** @primaryKey */
+	id: string;
+	/** @required */
+	machine: Machine | string;
+	maintenance_type?: 'routine' | 'preventive' | 'corrective' | 'emergency' | 'inspection' | null;
+	/** @required */
+	maintenance_date: string;
+	technician?: string | null;
+	description?: string | null;
+	/** @description List of parts replaced during maintenance */
+	parts_replaced?: string | null;
+	/** @description Maintenance cost */
+	cost?: number | null;
+	/** @description Scheduled next maintenance date */
+	next_maintenance_date?: string | null;
+	status?: 'completed' | 'scheduled' | 'in_progress' | 'cancelled' | null;
 }
 
 export interface Navigation {
@@ -862,12 +987,9 @@ export interface Post {
 	date_updated?: string | null;
 	user_updated?: DirectusUser | string | null;
 	post_icon?: string | null;
-	audio_clip?: DirectusFile | string | null;
-	content_type?: 'plumbing' | 'electrical' | null;
-	md?: string | null;
-	target_user?: 'landlord' | 'business' | null;
 	site?: Site | string | null;
 	site_a_specific?: SiteASpecific | string | null;
+	md_content?: string | null;
 	related_posts?: PostsPost[] | string[];
 	translations?: PostsTranslation[] | null;
 	categories?: PostWebsiteCategory[] | string[];
@@ -888,6 +1010,7 @@ export interface PostsTranslation {
 	/** @required */
 	title: string;
 	content?: string | null;
+	slug?: string | null;
 }
 
 export interface PostWebsiteCategory {
@@ -903,6 +1026,21 @@ export interface PostWebsiteCategoryCategoriesEi {
 	id: number;
 	post_website_category_id?: PostWebsiteCategory | string | null;
 	categories_eis_id?: CategoriesEi | string | null;
+}
+
+export interface ProductAttributeKey {
+	/** @primaryKey */
+	key: string;
+	label?: string | null;
+	units?: string | null;
+}
+
+export interface ProductAttribute {
+	/** @primaryKey */
+	id: string;
+	product?: Product | string | null;
+	value?: string | null;
+	key?: ProductAttributeKey | string | null;
 }
 
 export interface ProductImage {
@@ -939,12 +1077,13 @@ export interface Product {
 	size?: 'gray' | null;
 	category?: Category | string | null;
 	publish__date?: string | null;
-	categories?: ProductsCategory[] | string[];
 	gallery?: ProductsFile[] | string[];
+	categories?: ProductsCategory[] | string[];
 	documents?: ProductsFiles1[] | string[];
-	variants?: ProductVariant[] | string[];
+	attributes?: ProductAttribute[] | string[];
 	/** @description Gallery of images featured on the product page */
 	images?: ProductImage[] | string[];
+	variants?: ProductVariant[] | string[];
 }
 
 export interface ProductsCategory {
@@ -1057,6 +1196,12 @@ export interface Rental {
 	/** @required */
 	payment_frequency: 'monthly' | 'weekly' | 'yearly';
 	terms?: string | null;
+	date?: string | null;
+}
+
+export interface SheduledVersion {
+	/** @primaryKey */
+	id: string;
 }
 
 export interface Ship {
@@ -1271,6 +1416,7 @@ export interface DirectusField {
 	group?: DirectusField | string | null;
 	validation?: 'json' | null;
 	validation_message?: string | null;
+	searchable?: boolean;
 }
 
 export interface DirectusFile {
@@ -1451,7 +1597,6 @@ export interface DirectusSettings {
 	public_registration_role?: DirectusRole | string | null;
 	public_registration_email_filter?: 'json' | null;
 	visual_editor_urls?: Array<{ url: string }> | null;
-	accepted_terms?: boolean | null;
 	project_id?: string | null;
 	/** @description Settings for the Command Palette Module. */
 	command_palette_settings?: Record<string, any> | null;
@@ -1462,6 +1607,11 @@ export interface DirectusSettings {
 	mcp_system_prompt_enabled?: boolean;
 	mcp_system_prompt?: string | null;
 	flow_manager_categories?: Record<string, any> | null;
+	project_owner?: string | null;
+	project_usage?: string | null;
+	org_name?: string | null;
+	product_updates?: boolean | null;
+	project_status?: string | null;
 }
 
 export interface DirectusUser {
@@ -1653,6 +1803,7 @@ export interface Schema {
 	announcements: Announcement[];
 	announcements_files: AnnouncementsFile[];
 	areas: Area[];
+	attractions: Attraction[];
 	block_button: BlockButton[];
 	block_button_group: BlockButtonGroup[];
 	block_form: BlockForm[];
@@ -1665,8 +1816,6 @@ export interface Schema {
 	block_richtext: BlockRichtext[];
 	brand_key_stats: BrandKeyStat[];
 	brands: Brand[];
-	broadsheet_images: BroadsheetImage[];
-	broadsheet_images_files: BroadsheetImagesFile[];
 	categories: Category[];
 	categories_eis: CategoriesEi[];
 	cities: City[];
@@ -1680,8 +1829,8 @@ export interface Schema {
 	customer: Customer[];
 	customer_addresses: CustomerAddresse[];
 	customer_communities: CustomerCommunity[];
+	customer_profile: CustomerProfile[];
 	customers: Customer[];
-	demo_autocomplete: DemoAutocomplete[];
 	directus_sync_id_map: DirectusSyncIdMap[];
 	drones: Drone[];
 	events: Event[];
@@ -1697,6 +1846,10 @@ export interface Schema {
 	kudos: Kudo[];
 	languages: Language[];
 	lookup_relation: LookupRelation[];
+	machines: Machine[];
+	machine_telemetry: MachineTelemetry[];
+	machine_types: MachineType[];
+	maintenance_records: MaintenanceRecord[];
 	navigation: Navigation[];
 	navigation_items: NavigationItem[];
 	news_item_comment: NewsItemComment[];
@@ -1709,6 +1862,8 @@ export interface Schema {
 	posts_translations: PostsTranslation[];
 	post_website_category: PostWebsiteCategory[];
 	post_website_category_categories_eis: PostWebsiteCategoryCategoriesEi[];
+	product_attribute_keys: ProductAttributeKey[];
+	product_attributes: ProductAttribute[];
 	product_images: ProductImage[];
 	products: Product[];
 	products_categories: ProductsCategory[];
@@ -1720,6 +1875,7 @@ export interface Schema {
 	property_addresses: PropertyAddresse[];
 	redirects: Redirect[];
 	rentals: Rental[];
+	sheduled_versions: SheduledVersion[];
 	ships: Ship[];
 	site_a_specific: SiteASpecific[];
 	sites: Site[];
@@ -1766,6 +1922,7 @@ export enum CollectionNames {
 	announcements = 'announcements',
 	announcements_files = 'announcements_files',
 	areas = 'areas',
+	attractions = 'attractions',
 	block_button = 'block_button',
 	block_button_group = 'block_button_group',
 	block_form = 'block_form',
@@ -1778,8 +1935,6 @@ export enum CollectionNames {
 	block_richtext = 'block_richtext',
 	brand_key_stats = 'brand_key_stats',
 	brands = 'brands',
-	broadsheet_images = 'broadsheet_images',
-	broadsheet_images_files = 'broadsheet_images_files',
 	categories = 'categories',
 	categories_eis = 'categories_eis',
 	cities = 'cities',
@@ -1793,8 +1948,8 @@ export enum CollectionNames {
 	customer = 'customer',
 	customer_addresses = 'customer_addresses',
 	customer_communities = 'customer_communities',
+	customer_profile = 'customer_profile',
 	customers = 'customers',
-	demo_autocomplete = 'demo_autocomplete',
 	directus_sync_id_map = 'directus_sync_id_map',
 	drones = 'drones',
 	events = 'events',
@@ -1810,6 +1965,10 @@ export enum CollectionNames {
 	kudos = 'kudos',
 	languages = 'languages',
 	lookup_relation = 'lookup_relation',
+	machines = 'machines',
+	machine_telemetry = 'machine_telemetry',
+	machine_types = 'machine_types',
+	maintenance_records = 'maintenance_records',
 	navigation = 'navigation',
 	navigation_items = 'navigation_items',
 	news_item_comment = 'news_item_comment',
@@ -1822,6 +1981,8 @@ export enum CollectionNames {
 	posts_translations = 'posts_translations',
 	post_website_category = 'post_website_category',
 	post_website_category_categories_eis = 'post_website_category_categories_eis',
+	product_attribute_keys = 'product_attribute_keys',
+	product_attributes = 'product_attributes',
 	product_images = 'product_images',
 	products = 'products',
 	products_categories = 'products_categories',
@@ -1833,6 +1994,7 @@ export enum CollectionNames {
 	property_addresses = 'property_addresses',
 	redirects = 'redirects',
 	rentals = 'rentals',
+	sheduled_versions = 'sheduled_versions',
 	ships = 'ships',
 	site_a_specific = 'site_a_specific',
 	sites = 'sites',
