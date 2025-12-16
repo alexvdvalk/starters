@@ -1,14 +1,15 @@
+
 export interface ExtensionSeoMetadata {
-	title?: string;
-	meta_description?: string;
-	og_image?: string;
-	additional_fields?: Record<string, unknown>;
-	sitemap?: {
-		change_frequency: 'always' | 'hourly' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'never';
-		priority: string;
-	};
-	no_index?: boolean;
-	no_follow?: boolean;
+    title?: string;
+    meta_description?: string;
+    og_image?: string;
+    additional_fields?: Record<string, unknown>;
+    sitemap?: {
+        change_frequency: 'always' | 'hourly' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'never';
+        priority: string;
+    };
+    no_index?: boolean;
+    no_follow?: boolean;
 }
 
 export interface AiPrompt {
@@ -29,6 +30,23 @@ export interface AiPrompt {
 	user_created?: DirectusUser | string | null;
 	date_updated?: string | null;
 	user_updated?: DirectusUser | string | null;
+}
+
+export interface Approval {
+	/** @primaryKey */
+	id: string;
+	/** @required */
+	type: 'ce_marking' | 'eta' | 'other';
+	/** @description Approval reference (e.g., ETA-23/0428) */
+	reference?: string | null;
+	/** @description Available languages (e.g., en, de) */
+	languages?: string[] | null;
+	/** @description Declaration of Performance or approval document */
+	document?: DirectusFile | string | null;
+	/** @description Additional notes about the approval */
+	description?: string | null;
+	date_created?: string | null;
+	date_updated?: string | null;
 }
 
 export interface BlockButton {
@@ -94,7 +112,7 @@ export interface BlockGallery {
 	date_updated?: string | null;
 	user_updated?: DirectusUser | string | null;
 	/** @description Images to include in the image gallery. */
-	items?: DirectusFile[] | string[] | null;
+	items?: BlockGalleryItem[] | string[];
 }
 
 export interface BlockGalleryItem {
@@ -277,7 +295,7 @@ export interface FormSubmission {
 
 export interface FormSubmissionValue {
 	/** @primaryKey */
-	id?: string;
+	id: string;
 	/** @description Parent form submission for this value. */
 	form_submission?: FormSubmission | string | null;
 	field?: FormField | string | null;
@@ -289,16 +307,13 @@ export interface FormSubmissionValue {
 	timestamp?: string | null;
 }
 
-export interface Globals {
+export interface Global {
 	/** @description Site summary for search results. */
 	description?: string | null;
 	/** @primaryKey */
 	id: string;
 	/** @description Social media profile URLs */
-	social_links?: Array<{
-		url: string;
-		service: 'facebook' | 'instagram' | 'linkedin' | 'x' | 'vimeo' | 'youtube' | 'github' | 'discord' | 'docker';
-	}> | null;
+	social_links?: Array<{ url: string; service: 'facebook' | 'instagram' | 'linkedin' | 'x' | 'vimeo' | 'youtube' | 'github' | 'discord' | 'docker' }> | null;
 	/** @description Short phrase describing the site. */
 	tagline?: string | null;
 	/** @description Main site title */
@@ -321,6 +336,13 @@ export interface Globals {
 	user_created?: DirectusUser | string | null;
 	date_updated?: string | null;
 	user_updated?: DirectusUser | string | null;
+}
+
+export interface Language {
+	/** @primaryKey */
+	code: string;
+	name?: string | null;
+	direction?: 'ltr' | 'rtl' | null;
 }
 
 export interface Navigation {
@@ -351,7 +373,7 @@ export interface NavigationItem {
 	/** @description Label shown to the user for the menu item. @required */
 	title: string;
 	/** @description What type of link is this? Page and Post allow you to link to internal content. URL is for external content. Group can contain other menu items. */
-	type?: 'page' | 'post' | 'url' | 'group' | null;
+	type?: 'page' | 'post' | 'url' | 'group' | 'product' | null;
 	/** @description The URL to link to. Could be relative (ie `/my-page`) or a full external URL (ie `https://docs.directus.io`) */
 	url?: string | null;
 	/** @description The internal post to link to. */
@@ -360,6 +382,7 @@ export interface NavigationItem {
 	user_created?: DirectusUser | string | null;
 	date_updated?: string | null;
 	user_updated?: DirectusUser | string | null;
+	products?: Product | string | null;
 	/** @description Add child menu items within the group. */
 	children?: NavigationItem[] | string[];
 }
@@ -401,6 +424,7 @@ export interface Page {
 	user_created?: DirectusUser | string | null;
 	date_updated?: string | null;
 	user_updated?: DirectusUser | string | null;
+	site?: Site | string | null;
 	/** @description Create and arrange different content blocks (like text, images, or videos) to build your page. */
 	blocks?: PageBlock[] | string[];
 }
@@ -430,6 +454,141 @@ export interface Post {
 	user_created?: DirectusUser | string | null;
 	date_updated?: string | null;
 	user_updated?: DirectusUser | string | null;
+	publish_to_all?: boolean | null;
+	translations?: PostsTranslation[] | null;
+	linked_products?: PostsProduct[] | string[];
+	countries?: PostsSite[] | string[];
+}
+
+export interface PostsProduct {
+	/** @primaryKey */
+	id: number;
+	posts_id?: Post | string | null;
+	products_id?: Product | string | null;
+}
+
+export interface PostsSite {
+	/** @primaryKey */
+	id: number;
+	posts_id?: Post | string | null;
+	sites_id?: Site | string | null;
+}
+
+export interface PostsTranslation {
+	/** @primaryKey */
+	id: number;
+	posts_id?: Post | string | null;
+	languages_code?: Language | string | null;
+	/** @description Title of the blog post (used in page title and meta tags) @required */
+	title: string;
+	/** @description Unique URL for this post (e.g., `yoursite.com/posts/{{your-slug}}`) */
+	slug?: string | null;
+	/** @description Is this post published? */
+	status?: 'draft' | 'in_review' | 'published';
+	/** @description Short summary of the blog post to entice readers. */
+	description?: string | null;
+	/** @description Rich text content of your blog post. */
+	content?: string | null;
+}
+
+export interface ProductContact {
+	/** @primaryKey */
+	id: string;
+	/** @required */
+	name: string;
+	/** @description Job title (e.g., Sales Team Leader) */
+	title?: string | null;
+	/** @required */
+	email: string;
+	/** @description Phone number */
+	phone?: string | null;
+	/** @description Mobile number */
+	mobile?: string | null;
+	/** @description Sales region (e.g., London and South East of England) */
+	region?: string | null;
+	date_created?: string | null;
+	date_updated?: string | null;
+	photo?: DirectusFile | string | null;
+}
+
+export interface ProductDocument {
+	/** @primaryKey */
+	id: string;
+	/** @required */
+	title: string;
+	type?: 'technical_manual' | 'installation_instructions' | 'leaflet' | 'other' | null;
+	/** @required */
+	file: DirectusFile | string;
+	/** @description Document version (e.g., 02/2024) */
+	version?: string | null;
+	language?: 'en' | 'de' | 'other' | null;
+	date_created?: string | null;
+	date_updated?: string | null;
+}
+
+export interface Product {
+	/** @primaryKey */
+	id: string;
+	/** @required */
+	name: string;
+	status?: 'published' | 'draft' | 'archived';
+	sort?: number | null;
+	user_created?: DirectusUser | string | null;
+	date_created?: string | null;
+	user_updated?: DirectusUser | string | null;
+	date_updated?: string | null;
+	cover_image?: DirectusFile | string | null;
+	dimensions?: DirectusFile | string | null;
+	adeona_id?: string | null;
+	/** @description "Talk to our experts" section */
+	contacts?: ProductsProductContact[] | string[];
+	approvals?: ProductsApproval[] | string[];
+	documents?: ProductsProductDocument[] | string[];
+	translations?: ProductsTranslation[] | null;
+	combitable_products?: ProductsProduct[] | string[];
+}
+
+export interface ProductsApproval {
+	/** @primaryKey */
+	id: string;
+	products_id?: Product | string | null;
+	approvals_id?: Approval | string | null;
+	sort?: number | null;
+}
+
+export interface ProductsProductContact {
+	/** @primaryKey */
+	id: string;
+	products_id?: Product | string | null;
+	product_contacts_id?: ProductContact | string | null;
+	sort?: number | null;
+}
+
+export interface ProductsProductDocument {
+	/** @primaryKey */
+	id: string;
+	products_id?: Product | string | null;
+	product_documents_id?: ProductDocument | string | null;
+	sort?: number | null;
+}
+
+export interface ProductsProduct {
+	/** @primaryKey */
+	id: number;
+	products_id?: Product | string | null;
+	related_products_id?: Product | string | null;
+}
+
+export interface ProductsTranslation {
+	/** @primaryKey */
+	id: number;
+	products_id?: Product | string | null;
+	languages_code?: Language | string | null;
+	/** @description URL-friendly identifier @required */
+	slug: string;
+	description?: string | null;
+	/** @description Brief summary for listings */
+	short_description?: string | null;
 }
 
 export interface Redirect {
@@ -446,6 +605,39 @@ export interface Redirect {
 	user_created?: DirectusUser | string | null;
 	date_updated?: string | null;
 	user_updated?: DirectusUser | string | null;
+}
+
+export interface Site {
+	/** @primaryKey */
+	id: string;
+	user_created?: DirectusUser | string | null;
+	date_created?: string | null;
+	user_updated?: DirectusUser | string | null;
+	date_updated?: string | null;
+	title?: string | null;
+	base_url?: string | null;
+	continent?: string | null;
+	country?: string | null;
+	globals?: Global | string | null;
+	status?: 'draft' | 'published' | null;
+	pages?: Page[] | string[];
+	navigation_items?: SitesNavigationItem[] | string[];
+	site_managers?: SitesDirectusUser[] | string[];
+}
+
+export interface SitesDirectusUser {
+	/** @primaryKey */
+	id: number;
+	sites_id?: Site | string | null;
+	directus_users_id?: DirectusUser | string | null;
+}
+
+export interface SitesNavigationItem {
+	/** @primaryKey */
+	id: number;
+	sites_id?: Site | string | null;
+	navigation_items_id?: NavigationItem | string | null;
+	sort?: number | null;
 }
 
 export interface DirectusAccess {
@@ -528,6 +720,7 @@ export interface DirectusField {
 	group?: DirectusField | string | null;
 	validation?: 'json' | null;
 	validation_message?: string | null;
+	searchable?: boolean;
 }
 
 export interface DirectusFile {
@@ -681,31 +874,12 @@ export interface DirectusSettings {
 	public_background?: DirectusFile | string | null;
 	public_note?: string | null;
 	auth_login_attempts?: number | null;
-	auth_password_policy?:
-		| null
-		| `/^.{8,}$/`
-		| `/(?=^.{8,}$)(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+}{';'?>.<,])(?!.*\\s).*$/`
-		| null;
+	auth_password_policy?: null | `/^.{8,}$/` | `/(?=^.{8,}$)(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+}{';'?>.<,])(?!.*\\s).*$/` | null;
 	storage_asset_transform?: 'all' | 'none' | 'presets' | null;
-	storage_asset_presets?: Array<{
-		key: string;
-		fit: 'contain' | 'cover' | 'inside' | 'outside';
-		width: number;
-		height: number;
-		quality: number;
-		withoutEnlargement: boolean;
-		format: 'auto' | 'jpeg' | 'png' | 'webp' | 'tiff' | 'avif';
-		transforms: 'json';
-	}> | null;
+	storage_asset_presets?: Array<{ key: string; fit: 'contain' | 'cover' | 'inside' | 'outside'; width: number; height: number; quality: number; withoutEnlargement: boolean; format: 'auto' | 'jpeg' | 'png' | 'webp' | 'tiff' | 'avif'; transforms: 'json' }> | null;
 	custom_css?: string | null;
 	storage_default_folder?: DirectusFolder | string | null;
-	basemaps?: Array<{
-		name: string;
-		type: 'raster' | 'tile' | 'style';
-		url: string;
-		tileSize: number;
-		attribution: string;
-	}> | null;
+	basemaps?: Array<{ name: string; type: 'raster' | 'tile' | 'style'; url: string; tileSize: number; attribution: string }> | null;
 	mapbox_key?: string | null;
 	module_bar?: 'json' | null;
 	project_descriptor?: string | null;
@@ -725,10 +899,22 @@ export interface DirectusSettings {
 	public_registration_role?: DirectusRole | string | null;
 	public_registration_email_filter?: 'json' | null;
 	visual_editor_urls?: Array<{ url: string }> | null;
+	project_id?: string | null;
+	mcp_enabled?: boolean;
+	mcp_allow_deletes?: boolean;
+	mcp_prompts_collection?: string | null;
+	mcp_system_prompt_enabled?: boolean;
+	mcp_system_prompt?: string | null;
+	project_owner?: string | null;
+	project_usage?: string | null;
+	org_name?: string | null;
+	product_updates?: boolean | null;
+	project_status?: string | null;
+	ai_openai_api_key?: string | null;
+	ai_anthropic_api_key?: string | null;
+	ai_system_prompt?: string | null;
 	/** @description Settings for the Command Palette Module. */
 	command_palette_settings?: Record<string, any> | null;
-	accepted_terms?: boolean | null;
-	project_id?: string | null;
 }
 
 export interface DirectusUser {
@@ -750,7 +936,7 @@ export interface DirectusUser {
 	token?: string | null;
 	last_access?: string | null;
 	last_page?: string | null;
-	provider?: string;
+	provider?: 'microsoft';
 	external_identifier?: string | null;
 	auth_data?: 'json' | null;
 	email_notifications?: boolean | null;
@@ -910,6 +1096,7 @@ export interface DirectusExtension {
 
 export interface Schema {
 	ai_prompts: AiPrompt[];
+	approvals: Approval[];
 	block_button: BlockButton[];
 	block_button_group: BlockButtonGroup[];
 	block_form: BlockForm[];
@@ -924,13 +1111,28 @@ export interface Schema {
 	forms: Form[];
 	form_submissions: FormSubmission[];
 	form_submission_values: FormSubmissionValue[];
-	globals: Globals;
+	globals: Global[];
+	languages: Language[];
 	navigation: Navigation[];
 	navigation_items: NavigationItem[];
 	page_blocks: PageBlock[];
 	pages: Page[];
 	posts: Post[];
+	posts_products: PostsProduct[];
+	posts_sites: PostsSite[];
+	posts_translations: PostsTranslation[];
+	product_contacts: ProductContact[];
+	product_documents: ProductDocument[];
+	products: Product[];
+	products_approvals: ProductsApproval[];
+	products_product_contacts: ProductsProductContact[];
+	products_product_documents: ProductsProductDocument[];
+	products_products: ProductsProduct[];
+	products_translations: ProductsTranslation[];
 	redirects: Redirect[];
+	sites: Site[];
+	sites_directus_users: SitesDirectusUser[];
+	sites_navigation_items: SitesNavigationItem[];
 	directus_access: DirectusAccess[];
 	directus_activity: DirectusActivity[];
 	directus_collections: DirectusCollection[];
@@ -962,6 +1164,7 @@ export interface Schema {
 
 export enum CollectionNames {
 	ai_prompts = 'ai_prompts',
+	approvals = 'approvals',
 	block_button = 'block_button',
 	block_button_group = 'block_button_group',
 	block_form = 'block_form',
@@ -977,12 +1180,27 @@ export enum CollectionNames {
 	form_submissions = 'form_submissions',
 	form_submission_values = 'form_submission_values',
 	globals = 'globals',
+	languages = 'languages',
 	navigation = 'navigation',
 	navigation_items = 'navigation_items',
 	page_blocks = 'page_blocks',
 	pages = 'pages',
 	posts = 'posts',
+	posts_products = 'posts_products',
+	posts_sites = 'posts_sites',
+	posts_translations = 'posts_translations',
+	product_contacts = 'product_contacts',
+	product_documents = 'product_documents',
+	products = 'products',
+	products_approvals = 'products_approvals',
+	products_product_contacts = 'products_product_contacts',
+	products_product_documents = 'products_product_documents',
+	products_products = 'products_products',
+	products_translations = 'products_translations',
 	redirects = 'redirects',
+	sites = 'sites',
+	sites_directus_users = 'sites_directus_users',
+	sites_navigation_items = 'sites_navigation_items',
 	directus_access = 'directus_access',
 	directus_activity = 'directus_activity',
 	directus_collections = 'directus_collections',
@@ -1009,5 +1227,5 @@ export enum CollectionNames {
 	directus_operations = 'directus_operations',
 	directus_translations = 'directus_translations',
 	directus_versions = 'directus_versions',
-	directus_extensions = 'directus_extensions',
+	directus_extensions = 'directus_extensions'
 }

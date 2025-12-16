@@ -8,8 +8,8 @@ const config: Config = {
 	theme: {
 		extend: {
 			fontFamily: {
-				heading: ['Poppins', 'sans-serif'],
-				sans: ['Inter', 'sans-serif'],
+				heading: ['proxima-nova', 'sans-serif'],
+				sans: ['proxima-nova', 'sans-serif'],
 				code: ['Fira Mono', 'monospace'],
 			},
 			fontSize: {
