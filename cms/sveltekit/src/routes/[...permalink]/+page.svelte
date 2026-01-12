@@ -5,25 +5,31 @@
 	import { Button } from '$lib/components/ui/button';
 	import { Pencil } from '@lucide/svelte';
 	import { setAttr } from '$lib/directus/visualEditing';
+	import { getPageData } from './pages.remote.js';
 
-	let { data } = $props();
 
-	const blocks: PageBlock[] = $derived.by(() => {
-		if (!data.blocks) return [];
-		return data.blocks.filter(
+	const blocks = $derived.by(() => {
+		if (!pageData?.blocks) return [];
+		return pageData.blocks
+		.filter(
 			(block: any): block is PageBlock => typeof block === 'object' && block.collection
 		);
 	});
+
+	const pageData = $derived(await getPageData());
+
+	$inspect("pageData",pageData);
+	$inspect("blocks",blocks);
 </script>
 
 <svelte:head>
-	<title>{data.title || ''}</title>
-	<meta name="description" content={data.seo?.meta_description || ''} />
+	<title>{pageData.title || ''}</title>
+	<meta name="description" content={pageData.seo?.meta_description || ''} />
 </svelte:head>
 
 <div class="relative">
 	<PageBuilder sections={blocks} />
-	{#if page.data.visualEditingEnabled && data.id}
+	{#if page.data.visualEditingEnabled && pageData.id}
 		<div class="fixed inset-x-0 bottom-4 z-50 flex w-full items-center justify-center gap-2 p-4">
 			<!-- If you're not using the visual editor it's safe to remove this element. Just a helper to let editors add edit / add new blocks to a page. -->
 			<Button
@@ -32,7 +38,7 @@
 				class="visual-editing-button-class"
 				data-directus={setAttr({
 					collection: 'pages',
-					item: data.id,
+					item: pageData.id,
 					fields: ['blocks', 'meta_m2a_button'],
 					mode: 'modal'
 				})}
