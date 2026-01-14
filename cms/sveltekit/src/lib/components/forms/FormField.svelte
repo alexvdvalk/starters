@@ -23,26 +23,27 @@
 
 	const { errors } = $derived(form);
 
-	const fieldName = field.name as string;
 
-	const { form: formData } = form;
-	const widthClass = field.width
+	const { form: formData } = $derived(form);
+	const widthClass = $derived(field.width
 		? {
 				100: 'flex-[100%]',
 				50: 'flex-[calc(50%-1rem)]',
 				67: 'flex-[calc(67%-1rem)]',
 				33: 'flex-[calc(33%-1rem)]'
 			}[field.width] || 'flex-[100%]'
-		: 'flex-[100%]';
+		: 'flex-[100%]');
+
+		const fieldName = $derived(field.name?.replace ("-","DASH") || '');
 </script>
 
 {#if field.type !== 'hidden'}
-	<div class={`flex flex-shrink-0 flex-col justify-center ${widthClass}`}>
-		<Form.Field {form} name={field.name!}>
+	<div class={`flex shrink-0 flex-col justify-center ${widthClass}`}>
+		<Form.Field {form} name={fieldName}>
 			<Form.Control>
 				{#snippet children({ props })}
 					<Form.Label
-						for={field.name}
+						for={fieldName}
 						class={cn(
 							'flex items-center justify-between text-sm font-medium',
 							field.type === 'checkbox' || field.type === 'radio' ? 'space-x-2' : ''
@@ -74,36 +75,36 @@
 						<Input
 							{...props}
 							placeholder={field.placeholder || ''}
-							name={field.name || ''}
-							bind:value={$formData[field.name!]}
+							name={fieldName}
+							bind:value={$formData[fieldName]}
 							type={field.validation?.includes('email') ? 'email' : 'text'}
 						/>
 					{:else if field.type === 'textarea'}
 						<Textarea
 							{...props}
 							placeholder={field.placeholder || ''}
-							name={field.name || ''}
-							bind:value={$formData[field.name!]}
+							name={fieldName}
+							bind:value={$formData[fieldName!]}
 							required={field.required}
 						/>
 					{:else if field.type === 'checkbox'}
 						<div class="flex items-center space-x-3">
 							<Checkbox
 								{...props}
-								name={field.name}
-								bind:checked={$formData[field.name!]}
+								name={fieldName}
+								bind:checked={$formData[fieldName!]}
 								required={!!field.required}
 							/>
-							<Label for={field.name}>{field.label}</Label>
+							<Label for={fieldName}>{field.label}</Label>
 						</div>
 					{:else if field.type === 'checkbox_group'}
-						<CheckBoxGroup name={field.name || ''} options={field.choices || []} {form} />
+						<CheckBoxGroup name={fieldName} options={field.choices || []} {form} />
 					{:else if field.type === 'select'}
-						<SelectField name={field.name || ''} options={field.choices || []} {form} />
+						<SelectField name={fieldName} options={field.choices || []} {form} />
 					{:else if field.type === 'radio'}
-						<RadioGroup name={field.name || ''} options={field.choices || []} {form} />
+						<RadioGroup name={fieldName} options={field.choices || []} {form} />
 					{:else if field.type === 'file'}
-						<FileUploadField name={field.name || ''} {form} />
+						<FileUploadField name={fieldName} {form} />
 					{:else}
 						<p>Unknown field type: {field.type}</p>
 					{/if}

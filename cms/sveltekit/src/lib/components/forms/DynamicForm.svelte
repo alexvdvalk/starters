@@ -9,6 +9,7 @@
 	import SuperDebug from 'sveltekit-superforms';
 
 	import { zodClient, zod } from 'sveltekit-superforms/adapters';
+	import { submitForm } from './form-submit.remote';
 
 	interface DynamicFormProps {
 		fields: FormFieldType[];
@@ -19,10 +20,10 @@
 
 	const { fields, onSubmit, submitLabel, id }: DynamicFormProps = $props();
 
-	const sortedFields = [...fields].sort((a, b) => (a.sort || 0) - (b.sort || 0));
-	const formSchema = buildZodSchema(fields);
+	const sortedFields = $derived([...fields].sort((a, b) => (a.sort || 0) - (b.sort || 0)));
+	const formSchema = $derived(buildZodSchema(fields));
 
-	const defaultValues = fields.reduce<Record<string, any>>((defaults, field) => {
+	const defaultValues = $derived(fields.reduce<Record<string, any>>((defaults, field) => {
 		if (!field.name) return defaults;
 		switch (field.type) {
 			case 'checkbox':
@@ -40,13 +41,15 @@
 		}
 
 		return defaults;
-	}, {});
+	}, {}));
 
 	const form = superForm(defaultValues, {
 		validators: zodClient(formSchema),
 		SPA: true
 	});
 
+
+	$inspect ("submitForm", submitForm);
 	const { enhance, submit, form: formData, errors, validateForm } = $derived(form);
 
 	const onsubmit = async (e: Event) => {
@@ -62,7 +65,7 @@
 
 <form
 	class="flex flex-wrap gap-4"
-	{onsubmit}
+	{...submitForm}
 	data-directus={setAttr({
 		collection: 'forms',
 		item: id,
@@ -71,7 +74,7 @@
 	})}
 >
 	{#each sortedFields as field (field.id)}
-		<Field {field} {form} />
+		<Field {field} {form}  />
 	{/each}
 
 	<div class="w-full">
