@@ -12,6 +12,12 @@ export interface ExtensionSeoMetadata {
     no_follow?: boolean;
 }
 
+export interface AiImage {
+	/** @primaryKey */
+	id: string;
+	image?: DirectusFile | string | null;
+}
+
 export interface AiPrompt {
 	/** @primaryKey */
 	id: string;
@@ -62,6 +68,7 @@ export interface Announcement {
 	title?: string | null;
 	cover_image?: DirectusFile | string | null;
 	specifications?: string | null;
+	banana?: DirectusFile | string | null;
 	other_images?: AnnouncementsFile[] | string[];
 }
 
@@ -364,6 +371,23 @@ export interface Continent {
 	code?: string | null;
 }
 
+export interface ContractPartner {
+	/** @primaryKey */
+	id: string;
+	user_created?: DirectusUser | string | null;
+	date_created?: string | null;
+	user_updated?: DirectusUser | string | null;
+	date_updated?: string | null;
+	name?: string | null;
+	parent?: ContractPartner | string | null;
+	code?: number | null;
+	sort?: number | null;
+	second_parent?: ContractPartner | string | null;
+	status?: 'draft' | 'approved' | null;
+	children?: ContractPartner[] | string[];
+	second_child?: ContractPartner[] | string[];
+}
+
 export interface CookieConsent {
 	/** @primaryKey */
 	id: string;
@@ -472,8 +496,8 @@ export interface Customer {
 	password?: string | null;
 	/** @description Is customer subscribed to marketing emails? */
 	is_subscribed?: boolean | null;
-	orders?: Order[] | string[];
 	addresses?: CustomerAddresse[] | string[];
+	orders?: Order[] | string[];
 }
 
 export interface DirectusSyncIdMap {
@@ -703,6 +727,93 @@ export interface Language {
 	slug?: string | null;
 }
 
+export interface LogitechProduct {
+	/** @primaryKey */
+	id: string;
+	/** @description Product name @required */
+	name: string;
+	/** @description URL-friendly identifier (translatable) */
+	slug?: string | null;
+	/** @description Product type/category */
+	product_type?: LogitechProductType | string | null;
+	/** @description Main product cover image */
+	cover_image?: DirectusFile | string | null;
+	/** @description Link to help documentation */
+	help_documentation_url?: string | null;
+	/** @description Link to drivers download page */
+	drivers_url?: string | null;
+	status?: 'published' | 'draft' | 'archived';
+	sort?: number | null;
+	user_created?: string | null;
+	date_created?: string | null;
+	user_updated?: string | null;
+	date_updated?: string | null;
+	/** @description Retailers that sell this product */
+	retailers?: LogitechProductsRetailer[] | string[];
+	/** @description Product gallery images */
+	gallery?: LogitechProductsGallery[] | string[];
+	/** @description Product translations for description and slug */
+	translations?: LogitechProductsTranslation[] | null;
+}
+
+export interface LogitechProductsGallery {
+	/** @primaryKey */
+	id: string;
+	logitech_products_id?: LogitechProduct | string | null;
+	directus_files_id?: DirectusFile | string | null;
+	sort?: number | null;
+}
+
+export interface LogitechProductsRetailer {
+	/** @primaryKey */
+	id: string;
+	logitech_products_id?: LogitechProduct | string | null;
+	logitech_retailers_id?: LogitechRetailer | string | null;
+	sort?: number | null;
+}
+
+export interface LogitechProductsTranslation {
+	/** @primaryKey */
+	id: string;
+	logitech_products_id?: LogitechProduct | string | null;
+	languages_code?: Language | string | null;
+	/** @description Translated product description */
+	description?: string | null;
+	/** @description Translated URL-friendly identifier */
+	slug?: string | null;
+}
+
+export interface LogitechProductType {
+	/** @primaryKey */
+	id: string;
+	/** @required */
+	name: string;
+	/** @description URL-friendly identifier */
+	slug?: string | null;
+	description?: string | null;
+	sort?: number | null;
+	user_created?: string | null;
+	date_created?: string | null;
+	user_updated?: string | null;
+	date_updated?: string | null;
+}
+
+export interface LogitechRetailer {
+	/** @primaryKey */
+	id: string;
+	/** @required */
+	name: string;
+	/** @description Retailer website URL */
+	website?: string | null;
+	/** @description Retailer logo */
+	logo?: DirectusFile | string | null;
+	sort?: number | null;
+	user_created?: string | null;
+	date_created?: string | null;
+	user_updated?: string | null;
+	date_updated?: string | null;
+}
+
 export interface LookupRelation {
 	/** @primaryKey */
 	id: number;
@@ -757,8 +868,8 @@ export interface Machine {
 	/** @description Battery nominal voltage (V) */
 	battery_voltage?: number | null;
 	notes?: string | null;
-	telemetry?: MachineTelemetry[] | string[];
 	maintenance_records?: MaintenanceRecord[] | string[];
+	telemetry?: MachineTelemetry[] | string[];
 }
 
 export interface MachineTelemetry {
@@ -988,7 +1099,6 @@ export interface Post {
 	user_updated?: DirectusUser | string | null;
 	post_icon?: string | null;
 	site?: Site | string | null;
-	site_a_specific?: SiteASpecific | string | null;
 	md_content?: string | null;
 	related_posts?: PostsPost[] | string[];
 	translations?: PostsTranslation[] | null;
@@ -1181,6 +1291,22 @@ export interface Redirect {
 	user_created?: DirectusUser | string | null;
 	date_updated?: string | null;
 	user_updated?: DirectusUser | string | null;
+}
+
+export interface RefundRequest {
+	/** @primaryKey */
+	id: string;
+	user_created?: DirectusUser | string | null;
+	date_created?: string | null;
+	user_updated?: DirectusUser | string | null;
+	date_updated?: string | null;
+	customer_id?: string | null;
+	request_date?: string | null;
+	details?: string | null;
+	status?: 'pending' | 'approved' | null;
+	/** @description Max £250 */
+	amount?: number | null;
+	customer?: Customer | string | null;
 }
 
 export interface Rental {
@@ -1612,6 +1738,9 @@ export interface DirectusSettings {
 	org_name?: string | null;
 	product_updates?: boolean | null;
 	project_status?: string | null;
+	ai_openai_api_key?: string | null;
+	ai_anthropic_api_key?: string | null;
+	ai_system_prompt?: string | null;
 }
 
 export interface DirectusUser {
@@ -1648,21 +1777,6 @@ export interface DirectusUser {
 	posts?: Post[] | string[];
 	sites?: SitesDirectusUser[] | string[];
 	policies?: DirectusAccess[] | string[];
-}
-
-export interface DirectusWebhook {
-	/** @primaryKey */
-	id: number;
-	name?: string;
-	method?: null;
-	url?: string;
-	status?: 'active' | 'inactive';
-	data?: boolean;
-	actions?: 'create' | 'update' | 'delete';
-	collections?: string[];
-	headers?: Array<{ header: string; value: string }> | null;
-	was_active_before_deprecation?: boolean;
-	migrated_flow?: DirectusFlow | string | null;
 }
 
 export interface DirectusDashboard {
@@ -1743,6 +1857,8 @@ export interface DirectusFlow {
 	flow_manager_order?: number | null;
 	flow_manager_last_run_at?: string | null;
 	flow_manager_run_counter?: number | null;
+	flow_manager_last_run_message?: string | null;
+	flow_manager_last_run_operation?: string | null;
 	operations?: DirectusOperation[] | string[];
 }
 
@@ -1798,6 +1914,7 @@ export interface DirectusExtension {
 }
 
 export interface Schema {
+	ai_images: AiImage[];
 	ai_prompts: AiPrompt[];
 	aircraft: Aircraft[];
 	announcements: Announcement[];
@@ -1822,6 +1939,7 @@ export interface Schema {
 	cities_files: CitiesFile[];
 	communities: Community[];
 	continent: Continent[];
+	contract_partner: ContractPartner[];
 	cookie_consents: CookieConsent[];
 	countries: Country[];
 	country: Country[];
@@ -1845,6 +1963,12 @@ export interface Schema {
 	globals: Globals;
 	kudos: Kudo[];
 	languages: Language[];
+	logitech_products: LogitechProduct[];
+	logitech_products_gallery: LogitechProductsGallery[];
+	logitech_products_retailers: LogitechProductsRetailer[];
+	logitech_products_translations: LogitechProductsTranslation[];
+	logitech_product_types: LogitechProductType[];
+	logitech_retailers: LogitechRetailer[];
 	lookup_relation: LookupRelation[];
 	machines: Machine[];
 	machine_telemetry: MachineTelemetry[];
@@ -1874,6 +1998,7 @@ export interface Schema {
 	properties_files: PropertiesFile[];
 	property_addresses: PropertyAddresse[];
 	redirects: Redirect[];
+	refund_request: RefundRequest[];
 	rentals: Rental[];
 	sheduled_versions: SheduledVersion[];
 	ships: Ship[];
@@ -1904,7 +2029,6 @@ export interface Schema {
 	directus_sessions: DirectusSession[];
 	directus_settings: DirectusSettings;
 	directus_users: DirectusUser[];
-	directus_webhooks: DirectusWebhook[];
 	directus_dashboards: DirectusDashboard[];
 	directus_panels: DirectusPanel[];
 	directus_notifications: DirectusNotification[];
@@ -1917,6 +2041,7 @@ export interface Schema {
 }
 
 export enum CollectionNames {
+	ai_images = 'ai_images',
 	ai_prompts = 'ai_prompts',
 	aircraft = 'aircraft',
 	announcements = 'announcements',
@@ -1941,6 +2066,7 @@ export enum CollectionNames {
 	cities_files = 'cities_files',
 	communities = 'communities',
 	continent = 'continent',
+	contract_partner = 'contract_partner',
 	cookie_consents = 'cookie_consents',
 	countries = 'countries',
 	country = 'country',
@@ -1964,6 +2090,12 @@ export enum CollectionNames {
 	globals = 'globals',
 	kudos = 'kudos',
 	languages = 'languages',
+	logitech_products = 'logitech_products',
+	logitech_products_gallery = 'logitech_products_gallery',
+	logitech_products_retailers = 'logitech_products_retailers',
+	logitech_products_translations = 'logitech_products_translations',
+	logitech_product_types = 'logitech_product_types',
+	logitech_retailers = 'logitech_retailers',
 	lookup_relation = 'lookup_relation',
 	machines = 'machines',
 	machine_telemetry = 'machine_telemetry',
@@ -1993,6 +2125,7 @@ export enum CollectionNames {
 	properties_files = 'properties_files',
 	property_addresses = 'property_addresses',
 	redirects = 'redirects',
+	refund_request = 'refund_request',
 	rentals = 'rentals',
 	sheduled_versions = 'sheduled_versions',
 	ships = 'ships',
@@ -2023,7 +2156,6 @@ export enum CollectionNames {
 	directus_sessions = 'directus_sessions',
 	directus_settings = 'directus_settings',
 	directus_users = 'directus_users',
-	directus_webhooks = 'directus_webhooks',
 	directus_dashboards = 'directus_dashboards',
 	directus_panels = 'directus_panels',
 	directus_notifications = 'directus_notifications',
