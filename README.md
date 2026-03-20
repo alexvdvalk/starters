@@ -170,15 +170,59 @@ Follow the prompts to:
 
 This sets up a local project with Docker-based Directus + frontend integration.
 
-### 3. Update your .env with the url and static token
-   - This will start Directus on [http://localhost:8055](http://localhost:8055). Use the following credentials to log in:
-     - **Admin Email**: `admin@example.com`
-     - **Admin Password**: `d1r3ctu5`
-
-   - Generate a static token for the admin user:
-
+### 3. Complete Directus setup and generate a static token
+   - This will start Directus on [http://localhost:8055](http://localhost:8055)
+   - On first launch, you'll be prompted to complete the admin setup
+   - After setup, generate a static token for the admin user:
         - Go to the **Users Directory**
         - Choose the Administrative User
-        - Scroll down to the **Token** field and generate a static token.
-        - Copy the token and save it. **Do not forget to save the user**, or you will encounter an "Invalid token" error.
+        - Scroll down to the **Token** field and generate a static token
+        - Copy the token and save it. **Do not forget to save the user**, or you will encounter an "Invalid token" error
+
 ---
+
+## Troubleshooting
+
+### Preview Not Working - Content Security Policy (CSP) Issues
+
+If you encounter CSP errors when using the Visual Editor preview, this is typically due to Content Security Policy restrictions.
+
+**For Local Docker Setup:** See [`cms/directus/README.md`](cms/directus/README.md#content-security-policy-csp-and-preview-issues) for configuration details.
+
+**For Directus Cloud:** You'll need to expose your localhost with HTTPS using a tunneling service (ngrok, localtunnel, etc.).
+
+**For complete documentation on configuring CSP for the Visual Editor, see the [official Directus documentation](https://directus.io/docs/guides/content/visual-editor/frontend-library).**
+
+---
+
+## Contributing
+
+### Commit Conventions
+
+This repo uses [Conventional Commits](https://www.conventionalcommits.org/) and [Release Please](https://github.com/googleapis/release-please) to automate changelogs and versioning per template.
+
+**Use the template name as the commit scope** so Release Please attributes changes correctly:
+
+```
+feat(cms): add new hero block
+fix(blank): correct docker-compose volume path
+chore(cms): update dependencies
+```
+
+Without a scope, changes are attributed to all templates.
+
+### Repo Structure
+
+```
+├── cms/                  # CMS starter template
+├── blank/                # Blank starter template
+├── _shared/              # Shared files (docker-compose, .env.example)
+├── _scripts/             # Internal build/validation scripts
+└── .github/              # CI workflows
+```
+
+Directories prefixed with `_` or `.` are internal and excluded from the template CLI.
+
+### Validation
+
+Run `node _scripts/validate-templates.js` to check all templates have the required structure and metadata.

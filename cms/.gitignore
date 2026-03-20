@@ -1,10 +1,12 @@
 # Directus Specific
-directus/data/
-directus/uploads/
+directus/data/*
+directus/uploads/*
 directus/extensions/.registry
+!directus/*/.gitkeep
 
 # Dependencies
 node_modules/
+.pnpm-store
 
 # General Logs
 logs/

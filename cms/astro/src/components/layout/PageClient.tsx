@@ -76,7 +76,7 @@ export default function PageClient({ initialSections, permalink, pageId }: PageC
     <div className="relative">
       <PageBuilder sections={sections} />
       {isVisualEditingEnabled && (
-        <div className="fixed z-50 w-full bottom-4 inset-x-0 p-4 flex justify-center items-center gap-2">
+        <div className="fixed z-[60] w-full bottom-4 inset-x-0 p-4 flex justify-center items-center gap-2">
           <Button
             id="visual-editing-button"
             variant="secondary"
@@ -102,6 +102,15 @@ export default function PageClient({ initialSections, permalink, pageId }: PageC
             height: 100%;
             transform: none;
             background: transparent;
+          }
+          /* Hide the rectangle but keep the overlay above the button so it can receive clicks */
+          .directus-visual-editing-overlay.visual-editing-button-class {
+            opacity: 0 !important;
+            z-index: 70 !important;
+          }
+          /* Ensure Visual Editor rectangles appear below header and buttons */
+          .directus-visual-editing-overlay {
+            z-index: 40 !important;
           }
         `}
       </style>

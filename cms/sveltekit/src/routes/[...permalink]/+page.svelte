@@ -1,7 +1,5 @@
 <script lang="ts">
-	import { afterNavigate, invalidateAll } from '$app/navigation';
 	import { page } from '$app/state';
-	import { PUBLIC_DIRECTUS_URL } from '$env/static/public';
 	import PageBuilder from '$lib/components/layout/PageBuilder.svelte';
 	import type { PageBlock } from '$lib/types/directus-schema.js';
 	import { Button } from '$lib/components/ui/button';
@@ -16,44 +14,17 @@
 			(block: any): block is PageBlock => typeof block === 'object' && block.collection
 		);
 	});
-
-	afterNavigate(() => {
-		console.log('afterNavigate', page.data.visualEditingEnabled);
-		// if (page.data.visualEditingEnabled) {
-		applyVisualEditing();
-		// }
-	});
-
-	const applyVisualEditing = async () => {
-		console.log('applyVisualEditing', page.url.pathname);
-		const { apply } = await import('@directus/visual-editing');
-		// apply({
-		// 	directusUrl: PUBLIC_DIRECTUS_URL,
-		// 	onSaved: async () => {
-		// 		await invalidateAll();
-		// 	}
-		// });
-
-		apply({
-			directusUrl: PUBLIC_DIRECTUS_URL,
-			elements: document.querySelector('#visual-editing-button') as HTMLElement,
-			customClass: 'visual-editing-button-class',
-			onSaved: async () => {
-				await invalidateAll();
-			}
-		});
-	};
 </script>
 
 <svelte:head>
 	<title>{data.title || ''}</title>
-	<meta name="description" content={data.description || ''} />
+	<meta name="description" content={data.seo?.meta_description || ''} />
 </svelte:head>
 
 <div class="relative">
 	<PageBuilder sections={blocks} />
 	{#if page.data.visualEditingEnabled && data.id}
-		<div class="fixed inset-x-0 bottom-4 z-50 flex w-full items-center justify-center gap-2 p-4">
+		<div class="fixed inset-x-0 bottom-4 z-[60] flex w-full items-center justify-center gap-2 p-4">
 			<!-- If you're not using the visual editor it's safe to remove this element. Just a helper to let editors add edit / add new blocks to a page. -->
 			<Button
 				id="visual-editing-button"
@@ -85,5 +56,14 @@
 		height: 100%;
 		transform: none;
 		background: transparent;
+	}
+	/* Hide the rectangle but keep the overlay above the button so it can receive clicks */
+	:global(.directus-visual-editing-overlay.visual-editing-button-class) {
+		opacity: 0 !important;
+		z-index: 70 !important;
+	}
+	/* Ensure Visual Editor rectangles appear below header and buttons */
+	:global(.directus-visual-editing-overlay) {
+		z-index: 40 !important;
 	}
 </style>
