@@ -9,13 +9,18 @@
 	import BaseText from '$lib/components/ui/Text.svelte';
 	import ShareDialog from '$lib/components/ui/ShareDialog.svelte';
 	import setAttr from '$lib/directus/visualEditing';
+	import { getPost } from './blog.remote';
 
-	let { data }: { data: PageData } = $props();
+	let { params }: { data: PageData; params: { slug: string } } = $props();
 
-	let post = $derived(data.post);
-	const author = $derived(data.author);
+	// must pass the slug so the query can be invalidated when the slug changes
+	const getPostData = $derived(await getPost(params.slug));
+	const post = $derived(getPostData?.post);
+
+	const author = $derived(getPostData.author);
 	const authorName = $derived([author?.first_name, author?.last_name].filter(Boolean).join(' '));
 	const postUrl = `${PUBLIC_SITE_URL}/blog/${page.params.slug}`;
+	$inspect('author', author);
 </script>
 
 <Container class="py-12">
@@ -125,7 +130,7 @@
 				<Separator class="my-4" />
 				<h3 class="mb-4 font-bold">Related Posts</h3>
 				<div class="space-y-4">
-					{#each data.relatedPosts as relatedPost (relatedPost.id)}
+					{#each getPostData?.relatedPosts as relatedPost (relatedPost.id)}
 						<a
 							href={`/blog/${relatedPost.slug}`}
 							class="group flex items-center space-x-4 hover:text-accent"

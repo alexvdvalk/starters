@@ -2,7 +2,6 @@
 	import { Button, buttonVariants } from '$lib/components/ui/button/index.js';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 
-	import { page } from '$app/state';
 	import Container from '$lib/components/ui/Container.svelte';
 	import SearchModal from '../ui/SearchModal.svelte';
 	import LightSwitch from './LightSwitch.svelte';
@@ -10,15 +9,18 @@
 	import { ChevronDown, Menu } from '@lucide/svelte';
 	import * as Collapsible from '$lib/components/ui/collapsible';
 	import setAttr from '$lib/directus/visualEditing';
+	import { getSiteData } from '../../../routes/siteData.remote';
 
-	const globals = $derived(page.data.globals);
-	const navigation = $derived(page.data.headerNavigation);
-	const directusURL = PUBLIC_DIRECTUS_URL;
+	const siteData = $derived(await getSiteData());
+	const globals = $derived(siteData?.globals);
+	const navigation = $derived(siteData?.headerNavigation);
+
+	$inspect('navigation', navigation);
 	const lightLogoUrl = $derived(
-		globals?.logo ? `${directusURL}/assets/${globals.logo}` : '/images/logo.svg'
+		globals?.logo ? `${PUBLIC_DIRECTUS_URL}/assets/${globals.logo}` : '/images/logo.svg'
 	);
 	const darkLogoUrl = $derived(
-		globals?.logo_dark_mode ? `${directusURL}/assets/${globals.logo_dark_mode}` : ''
+		globals?.logo_dark_mode ? `${PUBLIC_DIRECTUS_URL}/assets/${globals.logo_dark_mode}` : ''
 	);
 </script>
 
@@ -55,9 +57,9 @@
 					: undefined}
 			>
 				{#each navigation?.items as item (item.id)}
-					{#if item.children.length === 0}
+					{#if item?.children?.length === 0}
 						<Button
-							href={item.page.permalink}
+							href={item?.page?.permalink}
 							variant="ghost"
 							class="!font-heading !text-nav !text-inherit
 ">{item.title}</Button

@@ -1,12 +1,19 @@
 <script lang="ts">
-	import { page } from '$app/state';
 	import PageBuilder from '$lib/components/layout/PageBuilder.svelte';
 	import type { PageBlock } from '$lib/types/directus-schema.js';
 	import { Button } from '$lib/components/ui/button';
 	import { Pencil } from '@lucide/svelte';
 	import { setAttr } from '$lib/directus/visualEditing';
+	import { getSiteData } from '../siteData.remote.js';
+	import { getPageData } from './pageData.remote.js';
 
-	let { data } = $props();
+	let { params }: { params: { permalink: string } } = $props();
+
+	const siteData = $derived(await getSiteData());
+	const pageData = $derived(await getPageData(params.permalink));
+	const visualEditingEnabled = $derived(siteData?.visualEditingEnabled);
+
+	const data = $derived(pageData);
 
 	const blocks: PageBlock[] = $derived.by(() => {
 		if (!data.blocks) return [];
@@ -23,7 +30,7 @@
 
 <div class="relative">
 	<PageBuilder sections={blocks} />
-	{#if page.data.visualEditingEnabled && data.id}
+	{#if visualEditingEnabled && data.id}
 		<div class="fixed inset-x-0 bottom-4 z-[60] flex w-full items-center justify-center gap-2 p-4">
 			<!-- If you're not using the visual editor it's safe to remove this element. Just a helper to let editors add edit / add new blocks to a page. -->
 			<Button

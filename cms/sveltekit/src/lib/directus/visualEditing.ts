@@ -1,6 +1,6 @@
 import { browser } from '$app/environment';
-import { page } from '$app/state';
 import { setAttr as basesetAttr } from '@directus/visual-editing';
+import { getSiteData } from '../../routes/siteData.remote';
 
 interface ApplyOptions {
 	collection: string;
@@ -17,8 +17,10 @@ export const setAttr = (options: ApplyOptions) => {
 	}
 };
 
-export const enableVisualEditing = () => {
-	if (browser && page.data.visualEditingEnabled) {
+export const enableVisualEditing = async () => {
+	const siteData = await getSiteData();
+	const visualEditingEnabled = siteData?.visualEditingEnabled;
+	if (browser && visualEditingEnabled) {
 		sessionStorage.setItem('visual-editing', 'true');
 	}
 };

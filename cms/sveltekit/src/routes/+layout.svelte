@@ -5,22 +5,26 @@
 	import Footer from '$lib/components/layout/Footer.svelte';
 	import { ModeWatcher } from 'mode-watcher';
 	import { getDirectusAssetURL } from '$lib/directus/directus-utils';
-	import { page } from '$app/state';
 	import { PUBLIC_DIRECTUS_URL } from '$env/static/public';
 	import { afterNavigate, invalidateAll } from '$app/navigation';
 	import { enableVisualEditing } from '$lib/directus/visualEditing';
 	import { apply } from '@directus/visual-editing';
+	import { getSiteData } from './siteData.remote';
 
-	let { children, data } = $props();
+	let { children } = $props();
 
-	const siteTitle = $derived(data.globals?.title || 'Simple CMS');
+	const siteData = $derived(await getSiteData());
+
+	const globals = $derived(siteData?.globals);
+
+	const siteTitle = $derived(globals?.title || 'Simple CMS');
 	const siteDescription = $derived(
-		page.data.globals?.description || 'A starter CMS template powered by Svelte and Directus.'
+		globals?.description || 'A starter CMS template powered by Svelte and Directus.'
 	);
 	const faviconURL = $derived(
-		data.globals?.favicon ? getDirectusAssetURL(data.globals.favicon) : '/favicon.ico'
+		globals?.favicon ? getDirectusAssetURL(globals.favicon) : '/favicon.ico'
 	);
-	const accentColor = $derived(data.globals?.accent_color || '#6644ff');
+	const accentColor = $derived(globals?.accent_color || '#6644ff');
 
 	enableVisualEditing();
 
@@ -29,7 +33,7 @@
 		await apply({
 			directusUrl: PUBLIC_DIRECTUS_URL,
 			onSaved: async () => {
-				await invalidateAll();
+				// await invalidateAll();
 			}
 		});
 		// Second apply: add customClass to the Edit All Blocks overlay so the hide rule can target it

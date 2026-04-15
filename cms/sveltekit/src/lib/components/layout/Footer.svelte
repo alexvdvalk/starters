@@ -4,11 +4,14 @@
 	import { page } from '$app/state';
 	import Container from '../ui/Container.svelte';
 	import LightSwitch from './LightSwitch.svelte';
+	import { getSiteData } from '../../../routes/siteData.remote';
 
 	const directusURL = PUBLIC_DIRECTUS_URL;
 
-	const globals = $derived(page.data?.globals);
-	const navPrimary = $derived(page.data?.footerNavigation);
+	const siteData = $derived(await getSiteData());
+
+	const globals = $derived(siteData?.globals);
+	const navPrimary = $derived(siteData?.footerNavigation);
 	const lightLogoUrl = $derived(
 		globals?.logo ? `${directusURL}/assets/${globals.logo}` : '/images/logo.svg'
 	);
@@ -76,7 +79,10 @@
 											{group.title}
 										</a>
 									{:else}
-										<a href={group?.url || '#'} class="text-nav font-medium hover:underline">
+										<a
+											href={group.page?.permalink || '#'}
+											class="text-nav font-medium hover:underline"
+										>
 											{group.title}
 										</a>
 									{/if}

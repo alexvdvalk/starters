@@ -1,3 +1,5 @@
+import { getRequestEvent } from '$app/server';
+import { error } from '@sveltejs/kit';
 import {
 	type BlockPost,
 	type PageBlock,
@@ -171,6 +173,13 @@ export const fetchPageData = async (
 	const { getDirectus } = useDirectus();
 	const directus = getDirectus();
 
+	const event = getRequestEvent();
+	if (event.url.pathname === "/.well-known/appspecific/com.chrome.devtools.json") {
+
+		error(404, {
+			message: 'Page not found'
+		});
+	}
 	try {
 		const pageData = (await directus.request(
 			withToken(
