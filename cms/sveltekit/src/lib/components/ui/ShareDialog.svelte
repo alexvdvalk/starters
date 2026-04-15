@@ -4,6 +4,7 @@
 	import Button, { buttonVariants } from './button/button.svelte';
 	import { Label } from './label';
 	import { Input } from './input';
+	import { resolve } from '$app/paths';
 
 	let copied = $state(false);
 
@@ -35,8 +36,8 @@
 
 <Dialog.Root>
 	<Dialog.Trigger class={buttonVariants({ variant: 'outline' })}>
-			<Share class="size-4" />
-			<span>Share Blog</span>
+		<Share class="size-4" />
+		<span>Share Blog</span>
 	</Dialog.Trigger>
 	<Dialog.Content class="sm:max-w-md">
 		<Dialog.Header>
@@ -45,7 +46,7 @@
 		<div class="mb-1 flex justify-center space-x-4">
 			{#each socialLinks as social (social.service)}
 				<a
-					href={social.url}
+					href={resolve(social.url)}
 					target="_blank"
 					rel="noopener noreferrer"
 					class="inline-flex items-center justify-center rounded bg-transparent transition-colors hover:opacity-70"
@@ -74,9 +75,7 @@
 			<p class="mt-2 text-sm text-green-600">Link copied to clipboard!</p>
 		{/if}
 		<Dialog.Footer class="sm:justify-start">
-			<Dialog.Close class={buttonVariants({ variant: 'secondary' })}>
-				Close
-			</Dialog.Close>
+			<Dialog.Close class={buttonVariants({ variant: 'secondary' })}>Close</Dialog.Close>
 		</Dialog.Footer>
 	</Dialog.Content>
 </Dialog.Root>

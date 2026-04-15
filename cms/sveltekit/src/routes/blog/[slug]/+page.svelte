@@ -10,8 +10,9 @@
 	import ShareDialog from '$lib/components/ui/ShareDialog.svelte';
 	import setAttr from '$lib/directus/visualEditing';
 	import { getPost } from './blog.remote';
+	import { resolve } from '$app/paths';
 
-	let { params }: { data: PageData; params: { slug: string } } = $props();
+	let { params } = $props();
 
 	// must pass the slug so the query can be invalidated when the slug changes
 	const getPostData = $derived(await getPost(params.slug));
@@ -132,7 +133,7 @@
 				<div class="space-y-4">
 					{#each getPostData?.relatedPosts as relatedPost (relatedPost.id)}
 						<a
-							href={`/blog/${relatedPost.slug}`}
+							href={resolve(`/blog/${relatedPost.slug}`)}
 							class="group flex items-center space-x-4 hover:text-accent"
 						>
 							{#if relatedPost.image}

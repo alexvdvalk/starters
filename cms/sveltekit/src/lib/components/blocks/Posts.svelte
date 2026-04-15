@@ -9,6 +9,7 @@
 	import Headline from '../ui/Headline.svelte';
 	import Tagline from '../ui/Tagline.svelte';
 	import { scale } from 'svelte/transition';
+	import { resolve } from '$app/paths';
 
 	interface PostsProps {
 		data: {
@@ -103,7 +104,7 @@
 		{#each paginatedPosts as post (post.id)}
 			<a
 				in:scale={{ duration: 100 }}
-				href={`/blog/${post.slug}`}
+				href={resolve(`/blog/${post.slug}`)}
 				class="group block overflow-hidden rounded-lg"
 			>
 				<div class="relative h-64 w-full overflow-hidden rounded-lg">

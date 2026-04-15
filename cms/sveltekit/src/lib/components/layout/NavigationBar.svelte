@@ -10,6 +10,7 @@
 	import * as Collapsible from '$lib/components/ui/collapsible';
 	import setAttr from '$lib/directus/visualEditing';
 	import { getSiteData } from '../../../routes/siteData.remote';
+	import { resolve } from '$app/paths';
 
 	const siteData = $derived(await getSiteData());
 	const globals = $derived(siteData?.globals);
@@ -26,7 +27,7 @@
 
 <header class="sticky top-0 z-[60] w-full bg-background font-heading text-foreground">
 	<Container class="flex items-center justify-between p-4">
-		<a href="/" class="flex-shrink-0">
+		<a href={resolve('/')} class="flex-shrink-0">
 			<img
 				src={lightLogoUrl}
 				alt="Logo"
@@ -59,7 +60,7 @@
 				{#each navigation?.items as item (item.id)}
 					{#if item?.children?.length === 0}
 						<Button
-							href={item?.page?.permalink}
+							href={resolve(item?.page?.permalink)}
 							variant="ghost"
 							class="!font-heading !text-nav !text-inherit
 ">{item.title}</Button
@@ -78,8 +79,9 @@
 							>
 								{#each item.children as child (child.id)}
 									<DropdownMenu.Item class="!bg-transparent">
-										<a class="hover:text-primary-500 w-full text-nav" href={child.page.permalink}
-											>{child.title}</a
+										<a
+											class="hover:text-primary-500 w-full text-nav"
+											href={resolve(child.page.permalink)}>{child.title}</a
 										>
 									</DropdownMenu.Item>
 								{/each}
@@ -111,7 +113,7 @@
 												{#if item.children.length === 0}
 													<DropdownMenu.Item class="!bg-transparent p-0 "
 														><a
-															href={item.page?.permalink || item.url || '#'}
+															href={resolve(item.page?.permalink || item.url || '#')}
 															class="w-full font-heading text-nav"
 														>
 															{item.title}</a
@@ -132,7 +134,8 @@
 																{#each item.children as child (child.id)}
 																	<a
 																		class="w-full font-heading text-nav"
-																		href={child.page?.permalink || child.url}>{child.title}</a
+																		href={resolve(child.page?.permalink || child.url)}
+																		>{child.title}</a
 																	>
 																{/each}
 															</div>

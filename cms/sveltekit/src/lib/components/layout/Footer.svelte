@@ -5,6 +5,7 @@
 	import Container from '../ui/Container.svelte';
 	import LightSwitch from './LightSwitch.svelte';
 	import { getSiteData } from '../../../routes/siteData.remote';
+	import { resolve } from '$app/paths';
 
 	const directusURL = PUBLIC_DIRECTUS_URL;
 
@@ -24,7 +25,7 @@
 	<Container class="text-foreground dark:text-white">
 		<div class="flex flex-col items-start justify-between gap-8 pt-8 md:flex-row">
 			<div class="flex-1">
-				<a href="/">
+				<a href={resolve('/')}>
 					{#if lightLogoUrl}
 						<img
 							src={lightLogoUrl}
@@ -50,7 +51,7 @@
 						{#each globals.social_links as social (social.service)}
 							<!-- key={social.service} -->
 							<a
-								href={social.url}
+								href={resolve(social.url)}
 								target="_blank"
 								rel="noopener noreferrer"
 								class="hover:text-accent"
@@ -75,12 +76,15 @@
 							{#each navPrimary.items as group (group.id)}
 								<li>
 									{#if group.children && group.page}
-										<a href={group.page.permalink} class="text-nav font-medium hover:underline">
+										<a
+											href={resolve(group.page.permalink)}
+											class="text-nav font-medium hover:underline"
+										>
 											{group.title}
 										</a>
 									{:else}
 										<a
-											href={group.page?.permalink || '#'}
+											href={resolve(group.page?.permalink ?? '#')}
 											class="text-nav font-medium hover:underline"
 										>
 											{group.title}
