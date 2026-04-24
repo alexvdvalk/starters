@@ -1,18 +1,16 @@
 <script lang="ts">
-	import { Button, buttonVariants } from '$lib/components/ui/button/index.js';
+	import { Button } from '$lib/components/ui/button/index.js';
 
 	import { Search } from '@lucide/svelte';
 	import * as Command from '$lib/components/ui/command/index.js';
 
-	import { debounce } from '$lib/utils';
+	import { resource } from 'runed';
+
 	import Badge from './badge/badge.svelte';
 	import { goto } from '$app/navigation';
 
 	let open = $state(false);
 	let search = $state('');
-	let searched = $state(false);
-	let loading = $state(false);
-	let results = $state<SearchResult[]>([]);
 
 	type SearchResult = {
 		id: string;
@@ -29,41 +27,35 @@
 		}
 	};
 
-	$effect(() => {
-		if (!open) {
-			// results = [];
-			searched = false;
-			loading = false;
-		}
-	});
-
-	const fetchResults = async (search: string) => {
-		if (search.length < 3 || !open) {
-			results = [];
-			// searched = false;
-			return;
-		}
-
-		loading = true;
-		// searched = true;
-
+	const fetchResults = async (search: string): Promise<SearchResult[]> => {
 		try {
 			const res = await fetch(`/api/search?search=${encodeURIComponent(search)}`);
 			if (!res.ok) throw new Error('Failed to fetch results');
 			const data: SearchResult[] = await res.json();
-			results = data.filter((r) => r.link);
+			return data.filter((r) => r.link);
 		} catch (error) {
 			console.error('Error fetching search results:', error);
-			results = [];
-		} finally {
-			loading = false;
+			return [];
 		}
 	};
-	const debouncedFetchResults = debounce(fetchResults, 300);
 
-	$effect(() => {
-		debouncedFetchResults(search);
-	});
+	let searchResource = resource(
+		() => search,
+		async (search: string) => {
+			if (search.length < 3) {
+				return { results: [], searched: false };
+			}
+			const results = await fetchResults(search);
+			return { results, searched: true };
+		},
+		{
+			initialValue: { results: [], searched: false },
+			lazy: true,
+			debounce: 300
+		}
+	);
+
+	$inspect('SR CURRENT', searchResource.current);
 
 	const handleSelect = (result: SearchResult) => {
 		goto(result.link);
@@ -85,21 +77,17 @@
 			class="m-2 p-4 text-base leading-normal focus:outline-none"
 		/>
 		<Command.List>
-			{#if !loading && !searched}
-				<Command.Empty>No results found.</Command.Empty>
-			{/if}
-
-			{#if loading}
+			{#if searchResource.loading}
 				<Command.Empty class="py-2 text-center text-sm">Loading...</Command.Empty>
 			{/if}
 
-			{#if !loading && searched && results.length === 0}
+			{#if !searchResource.loading && searchResource.current.searched && searchResource.current.results.length === 0}
 				<Command.Empty class="py-2 text-center text-sm">No results found.</Command.Empty>
 			{/if}
 
-			{#if results.length > 0}
+			{#if searchResource.current.results.length > 0}
 				<Command.Group heading="Search Results">
-					{#each results as result}
+					{#each searchResource.current.results as result}
 						<Command.Item
 							class="flex items-start gap-4 px-2 py-3"
 							onSelect={() => handleSelect(result)}
