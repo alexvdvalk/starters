@@ -16,12 +16,11 @@ import { getRequestEvent } from '$app/server';
 import { browser } from '$app/environment';
 
 const getFetchFn = () => {
-	try {
-		if (!browser) return getRequestEvent().fetch;
-		return globalThis.fetch;
-	} catch {
-		return globalThis.fetch;
+	if (!browser) {
+		const f = getRequestEvent().fetch;
+		return f;
 	}
+	return globalThis.fetch;
 };
 
 // Helper for retrying fetch requests
